@@ -1,0 +1,14 @@
+version: 3
+
+tasks:
+  help:
+    desc: Отобразить список доступных команд с их описанием
+    cmds:
+      - task -l
+    silent: true
+
+  gen:
+    desc: Сгенерировать gRPC модели
+    cmds:
+      - mkdir -p ./pkg/proto/auth/v1
+      - protoc -I proto ./proto/auth/v1/*.proto --go_out=./pkg/proto --go_opt=paths=source_relative --go-grpc_out=./pkg/proto --go-grpc_opt=paths=source_relative
