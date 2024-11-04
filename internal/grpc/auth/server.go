@@ -1,8 +1,8 @@
 package server
 
 import (
-	ssov1 "UMetrika_server/pkg/proto/auth/v1"
 	"context"
+	ssov1 "github.com/curtrika/UMetrika_server/pkg/proto/auth/v1"
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
 )
