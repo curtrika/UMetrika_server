@@ -19,6 +19,18 @@ tasks:
       - mkdir -p ./pkg/proto/auth/v1
       - protoc -I proto ./proto/auth/v1/*.proto --go_out=./pkg/proto --go_opt=paths=source_relative --go-grpc_out=./pkg/proto --go-grpc_opt=paths=source_relative
 
+  build:
+    cmds:
+      - go build -o ./build/main  ./cmd/sso/main.go
+
+  up:
+    cmds:
+      - docker-compose up -d
+
+  down:
+    cmds:
+      - docker-compose down
+
   test:
     desc: Запустить тесты (сервер запускается отдельно)
     cmds:

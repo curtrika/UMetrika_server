@@ -23,12 +23,12 @@ const (
 	grpcHost = "localhost"
 )
 
-// New creates new test suite
+// New creates new test suite.
 func New(t *testing.T) (context.Context, *Suite) {
 	t.Helper()
 	t.Parallel()
 
-	cfg := config.MustLoadPath(configPath())
+	cfg := config.MustLoadPath("../config/local_tests_config.yaml")
 
 	ctx, cancelCtx := context.WithTimeout(context.Background(), cfg.GRPC.Timeout)
 
