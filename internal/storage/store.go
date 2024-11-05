@@ -8,6 +8,8 @@ import (
 	"github.com/curtrika/UMetrika_server/internal/domain/models"
 	"github.com/curtrika/UMetrika_server/internal/storage/schemas"
 	"github.com/google/uuid"
+
+	_ "github.com/lib/pq"
 )
 
 // TODO: вынести в отдельный файл
@@ -21,9 +23,9 @@ func DatabaseInit(databaseURL string) (*Storage, error) {
 		return nil, err
 	}
 
-	if err := db.Ping(); err != nil {
-		return nil, err
-	}
+	//if err := db.Ping(); err != nil {
+	//	return nil, err
+	//}
 
 	return &Storage{
 		db: db,
@@ -35,8 +37,7 @@ func DatabaseInit(databaseURL string) (*Storage, error) {
 func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte) (uuid.UUID, error) {
 	const op = "storage.SaveUser"
 
-	q := `
-	insert into users (id, email, pass_hash)
+	q := `insert into users (id, email, pass_hash)
 	values ($1, $2, $3)
 	returning id;`
 
@@ -61,8 +62,7 @@ func (s *Storage) GetUserByEmail(ctx context.Context, email string) (*models.Use
 func (s *Storage) GetAppById(ctx context.Context, appID uuid.UUID) (*models.App, error) {
 	const op = "storage.GetUserByEmail"
 
-	q := `
-	select json_build_object(
+	q := `select json_build_object(
 	    'id', id, 
 	    'name', name, 
 	    'secret', secret
@@ -71,7 +71,7 @@ func (s *Storage) GetAppById(ctx context.Context, appID uuid.UUID) (*models.App,
 	where id = $1;`
 
 	var bs []byte
-	if err := s.db.QueryRowContext(ctx, q, email).Scan(&bs); err != nil {
+	if err := s.db.QueryRowContext(ctx, q, appID).Scan(&bs); err != nil {
 		// TODO: добавить кунг-фу ошибками (sql no rows)
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

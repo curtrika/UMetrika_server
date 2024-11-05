@@ -3,6 +3,7 @@ package grpcapp
 import (
 	"context"
 	"fmt"
+	authgrpc "github.com/curtrika/UMetrika_server/internal/grpc/auth"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"google.golang.org/grpc"

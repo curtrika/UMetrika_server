@@ -1,7 +1,6 @@
 package app
 
 import (
-	"database/sql"
 	grpcapp "github.com/curtrika/UMetrika_server/internal/app/grpc"
 	"github.com/curtrika/UMetrika_server/internal/services/auth"
 	"github.com/curtrika/UMetrika_server/internal/storage"
@@ -31,18 +30,4 @@ func Init(
 	return &App{
 		GRPCServer: grpcApp,
 	}
-}
-
-// TODO: найти место получше
-func newDB(databaseURL string) (*sql.DB, error) {
-	db, err := sql.Open("postgres", databaseURL)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := db.Ping(); err != nil {
-		return nil, err
-	}
-
-	return db, nil
 }

@@ -28,3 +28,13 @@ tasks:
     desc: Откатить миграции
     cmds:
       - goose -dir ./migrations down
+
+  mock_data_up:
+    desc: Добавить тестовые данные в БД
+    cmds:
+      - goose -dir ./tests/migrations up
+
+  mock_data_down:
+    desc: Удалить тестовые данные из БД
+    cmds:
+      - goose -dir ./tests/migrations down

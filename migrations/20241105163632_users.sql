@@ -9,7 +9,7 @@ create table if not exists users (
 );
 
 create table if not exists apps (
-    id uuid primary key default gen_random_uuid(),
+    id serial primary key,
     name varchar(25) not null unique,
     secret varchar(25) not null unique
 );
