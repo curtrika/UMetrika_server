@@ -43,6 +43,17 @@ func (a *App) Run() error {
 	return nil
 }
 
+// Stop stops gRPC server.
+func (a *App) Stop() {
+	const op = "grpcapp.Stop"
+
+	a.log.With(slog.String("op", op)).
+		Info("stopping gRPC server", slog.Int("port", a.port))
+
+	// Используем встроенный в gRPCServer механизм graceful shutdown
+	a.gRPCServer.GracefulStop()
+}
+
 // New creates new gRPC server app.
 func New(
 	log *slog.Logger,
