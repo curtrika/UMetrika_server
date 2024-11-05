@@ -36,7 +36,7 @@ type UserReader interface {
 }
 
 type AppReader interface {
-	GetAppById(ctx context.Context, appID uuid.UUID) (*models.App, error)
+	GetAppById(ctx context.Context, appID int32) (*models.App, error)
 }
 
 func New(
@@ -55,7 +55,7 @@ func New(
 	}
 }
 
-func (a *Auth) Login(ctx context.Context, email string, password string, appID uuid.UUID) (string, error) {
+func (a *Auth) Login(ctx context.Context, email string, password string, appID int32) (string, error) {
 	const op = "Auth.Login"
 
 	log := a.log.With(

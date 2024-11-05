@@ -59,7 +59,7 @@ func (s *Storage) GetUserByEmail(ctx context.Context, email string) (*models.Use
 	return nil, nil
 }
 
-func (s *Storage) GetAppById(ctx context.Context, appID uuid.UUID) (*models.App, error) {
+func (s *Storage) GetAppById(ctx context.Context, appID int32) (*models.App, error) {
 	const op = "storage.GetUserByEmail"
 
 	q := `select json_build_object(

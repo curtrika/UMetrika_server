@@ -22,7 +22,7 @@ type Auth interface {
 		ctx context.Context,
 		email string,
 		password string,
-		appID uuid.UUID,
+		appID int32,
 	) (token string, err error)
 
 	RegisterNewUser(
@@ -49,16 +49,11 @@ func (s *serverAPI) Login(
 		return nil, status.Error(codes.InvalidArgument, "password is required")
 	}
 
-	if in.GetAppId() == "" {
+	if in.GetAppId() == 0 {
 		return nil, status.Error(codes.InvalidArgument, "app_id is required")
 	}
 
-	parsedAppID, err := uuid.Parse(in.GetAppId())
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "app_id is required")
-	}
-
-	token, err := s.auth.Login(ctx, in.GetEmail(), in.GetPassword(), parsedAppID)
+	token, err := s.auth.Login(ctx, in.GetEmail(), in.GetPassword(), in.GetAppId())
 	if err != nil {
 		if errors.Is(err, auth.ErrInvalidCredentials) {
 			return nil, status.Error(codes.InvalidArgument, "invalid email or password")
