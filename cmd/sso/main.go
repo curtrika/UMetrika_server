@@ -1,9 +1,10 @@
 package main
 
 import (
+	"github.com/curtrika/UMetrika_server/internal/app"
+	"github.com/curtrika/UMetrika_server/internal/config"
 	"log/slog"
 	"os"
-	"umetrika/internal/config"
 )
 
 // TODO: вынести в отдельный модуль
@@ -18,9 +19,9 @@ func main() {
 
 	log := setupLogger(cfg.Env)
 
-	// TODO: инициализировать приложение
+	application := app.Init(log, cfg.GRPC.Port, cfg.DatabaseURL, cfg.TokenTTL)
 
-	// TODO: запустить gRPC сервер
+	application.GRPCServer.MustRun()
 }
 
 func setupLogger(env string) *slog.Logger {

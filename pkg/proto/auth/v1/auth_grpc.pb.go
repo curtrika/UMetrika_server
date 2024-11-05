@@ -23,7 +23,7 @@ const (
 	Auth_Login_FullMethodName    = "/auth.Auth/Login"
 )
 
-// AuthClient is the client API for Auth service.
+// AuthClient is the client API for Auth sso.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthClient interface {
@@ -59,7 +59,7 @@ func (c *authClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.C
 	return out, nil
 }
 
-// AuthServer is the server API for Auth service.
+// AuthServer is the server API for Auth sso.
 // All implementations must embed UnimplementedAuthServer
 // for forward compatibility
 type AuthServer interface {
@@ -82,7 +82,7 @@ func (UnimplementedAuthServer) Login(context.Context, *LoginRequest) (*LoginResp
 }
 func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
 
-// UnsafeAuthServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeAuthServer may be embedded to opt out of forward compatibility for this sso.
 // Use of this interface is not recommended, as added methods to AuthServer will
 // result in compilation errors.
 type UnsafeAuthServer interface {
@@ -129,7 +129,7 @@ func _Auth_Login_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
-// Auth_ServiceDesc is the grpc.ServiceDesc for Auth service.
+// Auth_ServiceDesc is the grpc.ServiceDesc for Auth sso.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Auth_ServiceDesc = grpc.ServiceDesc{

@@ -3,16 +3,20 @@ module github.com/curtrika/UMetrika_server
 go 1.23.2
 
 require (
+	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/google/uuid v1.6.0
+	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
-	google.golang.org/grpc v1.67.1
+	golang.org/x/crypto v0.13.0
+	google.golang.org/grpc v1.60.0-dev
 	google.golang.org/protobuf v1.35.1
 )
 
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
+	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
-	golang.org/x/net v0.28.0 // indirect
+	golang.org/x/net v0.15.0 // indirect
 	golang.org/x/sys v0.24.0 // indirect
 	golang.org/x/text v0.17.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240814211410-ddb44dafa142 // indirect
