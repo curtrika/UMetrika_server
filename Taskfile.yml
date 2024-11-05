@@ -19,6 +19,14 @@ tasks:
       - mkdir -p ./pkg/proto/auth/v1
       - protoc -I proto ./proto/auth/v1/*.proto --go_out=./pkg/proto --go_opt=paths=source_relative --go-grpc_out=./pkg/proto --go-grpc_opt=paths=source_relative
 
+  test:
+    desc: Запустить тесты (сервер запускается отдельно)
+    cmds:
+      - task migrations_up
+      - task mock_data_up
+      - go test ./tests -count=1 -v
+      - task migrations_down
+
   migrations_up:
     desc: Установить миграции
     cmds:
