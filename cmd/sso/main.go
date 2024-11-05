@@ -5,6 +5,8 @@ import (
 	"github.com/curtrika/UMetrika_server/internal/config"
 	"log/slog"
 	"os"
+	"os/signal"
+	"syscall"
 )
 
 // TODO: вынести в отдельный модуль
@@ -21,7 +23,17 @@ func main() {
 
 	application := app.Init(log, cfg.GRPC.Port, cfg.DatabaseURL, cfg.TokenTTL)
 
-	application.GRPCServer.MustRun()
+	go func() {
+		application.GRPCServer.MustRun()
+	}()
+
+	// Graceful shutdown
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
+
+	<-stop
+	application.GRPCServer.Stop()
+	log.Info("Gracefully stopped")
 }
 
 func setupLogger(env string) *slog.Logger {

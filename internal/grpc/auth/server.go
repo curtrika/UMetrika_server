@@ -3,6 +3,8 @@ package server
 import (
 	"context"
 	"errors"
+	"github.com/curtrika/UMetrika_server/internal/services/auth"
+	storage "github.com/curtrika/UMetrika_server/internal/storage/errs"
 	ssov1 "github.com/curtrika/UMetrika_server/pkg/proto/auth/v1"
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
@@ -47,11 +49,16 @@ func (s *serverAPI) Login(
 		return nil, status.Error(codes.InvalidArgument, "password is required")
 	}
 
-	if in.GetAppId() == 0 {
+	if in.GetAppId() == "" {
 		return nil, status.Error(codes.InvalidArgument, "app_id is required")
 	}
 
-	token, err := s.auth.Login(ctx, in.GetEmail(), in.GetPassword(), int(in.GetAppId()))
+	parsedAppID, err := uuid.Parse(in.GetAppId())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "app_id is required")
+	}
+
+	token, err := s.auth.Login(ctx, in.GetEmail(), in.GetPassword(), parsedAppID)
 	if err != nil {
 		if errors.Is(err, auth.ErrInvalidCredentials) {
 			return nil, status.Error(codes.InvalidArgument, "invalid email or password")
