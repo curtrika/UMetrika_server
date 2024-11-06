@@ -2,7 +2,7 @@ package adminpanelgrpc
 
 import (
 	"context"
-	ssov1 "github.com/curtrika/UMetrika_server/pkg/proto/admin_panel/v1"
+	adminpanelv1 "github.com/curtrika/UMetrika_server/pkg/proto/admin_panel/v1"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -11,7 +11,7 @@ import (
 )
 
 type serverAPI struct {
-	ssov1.UnimplementedAdminPanelServer
+	adminpanelv1.UnimplementedAdminPanelServer
 	adminPanel AdminPanel
 }
 
@@ -19,7 +19,7 @@ type AdminPanel interface {
 }
 
 func Register(gRPCServer *grpc.Server, adminPanel AdminPanel) {
-	ssov1.RegisterAdminPanelServer(gRPCServer, &serverAPI{adminPanel: adminPanel})
+	adminpanelv1.RegisterAdminPanelServer(gRPCServer, &serverAPI{adminPanel: adminPanel})
 }
 
 func RunRest() {
@@ -29,7 +29,7 @@ func RunRest() {
 
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-	err := ssov1.RegisterAdminPanelHandlerFromEndpoint(ctx, mux, "localhost:44044", opts)
+	err := adminpanelv1.RegisterAdminPanelHandlerFromEndpoint(ctx, mux, "localhost:44044", opts)
 	if err != nil {
 		panic(err)
 	}
@@ -41,6 +41,6 @@ func RunRest() {
 	}
 }
 
-func (s *serverAPI) Ping(ctx context.Context, req *ssov1.PingMessage) (*ssov1.PingMessage, error) {
+func (s *serverAPI) Ping(ctx context.Context, req *adminpanelv1.PingMessage) (*adminpanelv1.PingMessage, error) {
 	return req, nil
 }
