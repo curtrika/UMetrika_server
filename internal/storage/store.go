@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"github.com/curtrika/UMetrika_server/internal/converter"
 	"github.com/curtrika/UMetrika_server/internal/domain/models"
 	"github.com/curtrika/UMetrika_server/internal/storage/schemas"
 	"github.com/google/uuid"
@@ -14,7 +15,8 @@ import (
 
 // TODO: вынести в отдельный файл
 type Storage struct {
-	db *sql.DB
+	cvt converter.PsqlConverter
+	db  *sql.DB
 }
 
 func DatabaseInit(databaseURL string) (*Storage, error) {
@@ -81,10 +83,7 @@ func (s *Storage) GetAppById(ctx context.Context, appID int32) (*models.App, err
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	// TODO: добавить генератор конвертеров
-	return &models.App{
-		ID:     schema.ID,
-		Name:   schema.Name,
-		Secret: schema.Secret,
-	}, nil
+	appModel := s.cvt.AppToModel(schema)
+
+	return &appModel, nil
 }
