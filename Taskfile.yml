@@ -17,9 +17,10 @@ tasks:
     desc: Сгенерировать gRPC модели
     cmds:
       - mkdir -p ./pkg/proto/auth/v1
-      - protoc -I proto ./proto/auth/v1/*.proto --go_out=./pkg/proto --go_opt=paths=source_relative --go-grpc_out=./pkg/proto --go-grpc_opt=paths=source_relative
+      - protoc -I proto ./proto/auth/v1/*.proto --go_out=./pkg/proto --go_opt=paths=source_relative --go-grpc_out=./pkg/proto --go-grpc_opt paths=source_relative
       - mkdir -p ./pkg/proto/admin_panel/v1
       - protoc -I proto ./proto/admin_panel/v1/*.proto --go_out=./pkg/proto --go_opt=paths=source_relative --go-grpc_out=./pkg/proto --go-grpc_opt=paths=source_relative
+      - protoc -I proto ./proto/admin_panel/v1/*.proto --grpc-gateway_out=./pkg/proto --grpc-gateway_opt paths=source_relative --grpc-gateway_opt generate_unbound_methods=true
       - go generate ./...
 
   build:

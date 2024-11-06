@@ -25,9 +25,9 @@ func DatabaseInit(databaseURL string) (*Storage, error) {
 		return nil, err
 	}
 
-	if err := db.Ping(); err != nil {
-		return nil, err
-	}
+	//if err := db.Ping(); err != nil {
+	//	return nil, err
+	//}
 
 	return &Storage{
 		db: db,

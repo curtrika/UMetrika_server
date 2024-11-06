@@ -4,9 +4,21 @@ package admin_panel;
 
 option go_package = "github.com/curtrika/UMetrika_server/pkg/proto/admin_panel/v1;v1";
 
+import "google/api/annotations.proto";
+
 // AdminPanel is service for managing school info and users
 service AdminPanel {
+  rpc Ping (PingMessage) returns (PingMessage) {
+    option (google.api.http) = {
+      get: "/ping"
+    };
+  }
+
   rpc CreateDiscipline (CreateDisciplineRequest) returns (CreateDisciplineResponse);
+}
+
+message PingMessage {
+  int64 id = 1;
 }
 
 message CreateDisciplineRequest {

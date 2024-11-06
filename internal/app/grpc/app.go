@@ -3,6 +3,7 @@ package grpcapp
 import (
 	"context"
 	"fmt"
+	adminpanelgrpc "github.com/curtrika/UMetrika_server/internal/grpc/admin_panel"
 	authgrpc "github.com/curtrika/UMetrika_server/internal/grpc/auth"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
@@ -59,6 +60,7 @@ func (a *App) Stop() {
 func New(
 	log *slog.Logger,
 	authService authgrpc.Auth,
+	adminPanelService adminpanelgrpc.AdminPanel,
 	port int,
 ) *App {
 	loggingOpts := []logging.Option{ // позволяет логировать запросы/ответы сервера
@@ -81,7 +83,12 @@ func New(
 		logging.UnaryServerInterceptor(InterceptorLogger(log), loggingOpts...), // логирует запросы/ответы сервера
 	))
 
+	// sso
 	authgrpc.Register(gRPCServer, authService)
+
+	// admin panel
+	adminpanelgrpc.Register(gRPCServer, adminPanelService)
+	go adminpanelgrpc.RunRest()
 
 	return &App{
 		log:        log,

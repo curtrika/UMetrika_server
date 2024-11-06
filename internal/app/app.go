@@ -2,6 +2,7 @@ package app
 
 import (
 	grpcapp "github.com/curtrika/UMetrika_server/internal/app/grpc"
+	"github.com/curtrika/UMetrika_server/internal/services/admin_panel"
 	"github.com/curtrika/UMetrika_server/internal/services/auth"
 	"github.com/curtrika/UMetrika_server/internal/storage"
 	"log/slog"
@@ -25,7 +26,9 @@ func Init(
 
 	authService := auth.New(log, database, database, database, tokenTTL)
 
-	grpcApp := grpcapp.New(log, authService, grpcPort)
+	adminPanelService := admin_panel.New(log, database)
+
+	grpcApp := grpcapp.New(log, authService, adminPanelService, grpcPort)
 
 	return &App{
 		GRPCServer: grpcApp,

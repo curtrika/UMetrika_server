@@ -18,18 +18,9 @@ type serverAPI struct {
 }
 
 type Auth interface {
-	Login(
-		ctx context.Context,
-		email string,
-		password string,
-		appID int32,
-	) (token string, err error)
+	Login(ctx context.Context, email string, password string, appID int32) (token string, err error)
 
-	RegisterNewUser(
-		ctx context.Context,
-		email string,
-		password string,
-	) (userID uuid.UUID, err error)
+	RegisterNewUser(ctx context.Context, email string, password string) (userID uuid.UUID, err error)
 }
 
 func Register(gRPCServer *grpc.Server, auth Auth) {
