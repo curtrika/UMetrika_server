@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package admin_panel;
+
+option go_package = "github.com/curtrika/UMetrika_server/pkg/proto/admin_panel/v1;v1";
+
+// AdminPanel is service for managing school info and users
+service AdminPanel {
+  rpc CreateDiscipline (CreateDisciplineRequest) returns (CreateDisciplineResponse);
+}
+
+message CreateDisciplineRequest {
+  string title = 1;
+}
+
+message CreateDisciplineResponse {
+  Discipline discipline = 1;
+  repeated Error errors = 2;
+}
+
+message Error {
+  enum Code {
+    UNDEFINED_ERROR = 0;
+  }
+}
+
+message Discipline {
+  string id = 1;
+  string title = 2;
+}
