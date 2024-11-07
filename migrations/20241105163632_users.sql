@@ -4,8 +4,12 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 create table if not exists users (
     id uuid primary key default gen_random_uuid(),
+    full_name varchar(75) not null,
     email varchar(25) unique not null,
-    pass_hash bytea not null
+    pass_hash bytea not null,
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now(),
+    deleted_at timestamptz default null
 );
 
 create table if not exists apps (

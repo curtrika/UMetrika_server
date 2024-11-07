@@ -5,6 +5,7 @@ package admin_panel;
 option go_package = "github.com/curtrika/UMetrika_server/pkg/proto/admin_panel/v1;v1";
 
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
 
 // AdminPanel is service for managing school info and users
 service AdminPanel {
@@ -15,6 +16,13 @@ service AdminPanel {
   }
 
   rpc CreateDiscipline (CreateDisciplineRequest) returns (CreateDisciplineResponse);
+
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post: "/admin_panel/user"
+      body: "*"
+    };
+  }
 }
 
 message PingMessage {
@@ -30,6 +38,15 @@ message CreateDisciplineResponse {
   repeated Error errors = 2;
 }
 
+message CreateUserRequest {
+  User user_data = 10;
+}
+
+message CreateUserResponse {
+  repeated Error error = 1;
+  User new_user = 10;
+}
+
 message Error {
   enum Code {
     UNDEFINED_ERROR = 0;
@@ -39,4 +56,15 @@ message Error {
 message Discipline {
   string id = 1;
   string title = 2;
+}
+
+// TODO: подумать куда положить это дело
+message User {
+  string id = 1;
+  string full_name = 2;
+  string email = 3;
+  string password = 4;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+  google.protobuf.Timestamp deleted_at= 13;
 }

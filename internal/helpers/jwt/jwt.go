@@ -1,16 +1,17 @@
 package jwt
 
 import (
+	"time"
+
 	"github.com/curtrika/UMetrika_server/internal/domain/models"
 	"github.com/golang-jwt/jwt/v5"
-	"time"
 )
 
 func NewToken(user models.User, app models.App, duration time.Duration) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	claims := token.Claims.(jwt.MapClaims)
-	claims["uid"] = user.ID
+	claims["uid"] = user.Id.String()
 	claims["email"] = user.Email
 	claims["exp"] = time.Now().Add(duration).Unix()
 	claims["app_id"] = app.ID

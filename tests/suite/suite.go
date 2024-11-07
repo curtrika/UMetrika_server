@@ -2,12 +2,19 @@ package suite
 
 import (
 	"context"
-	"github.com/curtrika/UMetrika_server/internal/config"
-	ssov1 "github.com/curtrika/UMetrika_server/pkg/proto/auth/v1"
+	"log/slog"
 	"net"
 	"os"
 	"strconv"
+	"sync"
 	"testing"
+	"time"
+
+	"github.com/curtrika/UMetrika_server/internal/app"
+	"github.com/curtrika/UMetrika_server/internal/config"
+	"github.com/curtrika/UMetrika_server/internal/domain/models"
+	"github.com/curtrika/UMetrika_server/internal/storage"
+	ssov1 "github.com/curtrika/UMetrika_server/pkg/proto/auth/v1"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -23,42 +30,70 @@ const (
 	grpcHost = "localhost"
 )
 
-// New creates new test suite.
+// same const from tests
+const (
+	emptyAppID = 0
+	appID      = 1
+	appSecret  = "test-secret"
+
+	passDefaultLen = 10
+)
+
 func New(t *testing.T) (context.Context, *Suite) {
 	t.Helper()
-	t.Parallel()
 
-	cfg := config.MustLoadPath("../config/local_tests_config.yaml")
+	// Automatically assign an available port
+	cfg := config.Config{
+		Env:         "local",
+		DatabaseURL: os.Getenv("LOCAL_DB_TEST"),
+		GRPC: config.GRPCConfig{
+			Port:    44156, // use 0 for automatic port selection
+			Timeout: 10 * time.Hour,
+		},
+		TokenTTL: time.Duration(99 * time.Hour),
+	}
 
-	ctx, cancelCtx := context.WithTimeout(context.Background(), cfg.GRPC.Timeout)
+	ctx, cancelCtx := context.WithCancel(context.Background())
 
+	// Initialize mock database and application
+	mockDB := storage.NewMockDatabase()
+	mockDB.SaveAppById(ctx, appID, models.App{
+		ID:     appID,
+		Name:   "test",
+		Secret: appSecret,
+	})
+	application := app.Init(ctx, slog.Default(), cfg.GRPC.Port, cfg.TokenTTL, &mockDB)
+
+	// Run GRPC server in a goroutine and ensure proper shutdown with WaitGroup
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		if err := application.GRPCServer.Run(); err != nil {
+			t.Fatalf("failed to start gRPC server: %v", err)
+		}
+	}()
+
+	// Cleanup sequence: ensure server stops, then cancel the context
 	t.Cleanup(func() {
-		t.Helper()
+		application.GRPCServer.Stop() // Gracefully shut down server
+		wg.Wait()
 		cancelCtx()
 	})
 
-	cc, err := grpc.DialContext(context.Background(),
-		grpcAddress(cfg),
-		grpc.WithTransportCredentials(insecure.NewCredentials())) // Используем insecure-коннект для тестов
+	// Establish a client connection using the configured port
+	cc, err := grpc.DialContext(ctx,
+		grpcAddress(&cfg), // Note: ctx now used here
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("grpc server connection failed: %v", err)
 	}
 
 	return ctx, &Suite{
 		T:          t,
-		Cfg:        cfg,
+		Cfg:        &cfg,
 		AuthClient: ssov1.NewAuthClient(cc),
 	}
-}
-
-func configPath() string {
-	const key = "CONFIG_PATH"
-
-	if v := os.Getenv(key); v != "" {
-		return v
-	}
-
-	return "../config/local_tests.yaml"
 }
 
 func grpcAddress(cfg *config.Config) string {

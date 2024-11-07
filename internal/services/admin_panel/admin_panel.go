@@ -1,6 +1,10 @@
 package admin_panel
 
-import "log/slog"
+import (
+	"context"
+	"github.com/curtrika/UMetrika_server/internal/domain/models"
+	"log/slog"
+)
 
 type AdminPanel struct {
 	log      *slog.Logger
@@ -9,6 +13,7 @@ type AdminPanel struct {
 
 type Provider interface {
 	//TODO: сюда воообще все методы напишем
+	CreateUser(ctx context.Context, user models.User) (*models.User, error)
 }
 
 func New(
@@ -19,4 +24,12 @@ func New(
 		log:      log,
 		provider: provider,
 	}
+}
+
+func (a *AdminPanel) CreateUser(ctx context.Context, user models.User) (*models.User, error) {
+	newUser, err := a.provider.CreateUser(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+	return newUser, nil
 }
