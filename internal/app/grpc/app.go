@@ -3,6 +3,9 @@ package grpcapp
 import (
 	"context"
 	"fmt"
+	"log/slog"
+	"net"
+
 	adminpanelgrpc "github.com/curtrika/UMetrika_server/internal/grpc/admin_panel"
 	authgrpc "github.com/curtrika/UMetrika_server/internal/grpc/auth"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -10,8 +13,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"log/slog"
-	"net"
 )
 
 type App struct {
@@ -58,6 +59,7 @@ func (a *App) Stop() {
 
 // New creates new gRPC server app.
 func New(
+	ctx context.Context,
 	log *slog.Logger,
 	authService authgrpc.Auth,
 	adminPanelService adminpanelgrpc.AdminPanel,
@@ -88,7 +90,7 @@ func New(
 
 	// admin panel
 	adminpanelgrpc.Register(gRPCServer, adminPanelService)
-	go adminpanelgrpc.RunRest()
+	go adminpanelgrpc.RunRest(ctx)
 
 	return &App{
 		log:        log,

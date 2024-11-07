@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"sync"
+
 	"github.com/curtrika/UMetrika_server/internal/converter"
 	"github.com/curtrika/UMetrika_server/internal/domain/models"
 	"github.com/curtrika/UMetrika_server/internal/storage/schemas"
@@ -61,15 +63,19 @@ func (s *Storage) GetUserByEmail(ctx context.Context, email string) (*models.Use
 	return nil, nil
 }
 
+func (s *Storage) SaveApp(ctx context.Context, app models.App) (int32, error) {
+	return 0, nil
+}
+
 func (s *Storage) GetAppById(ctx context.Context, appID int32) (*models.App, error) {
 	const op = "storage.GetUserByEmail"
 
 	q := `select json_build_object(
-	    'id', id, 
-	    'name', name, 
+	    'id', id,
+	    'name', name,
 	    'secret', secret
 	)
-	from apps 
+	from apps
 	where id = $1;`
 
 	var bs []byte
@@ -86,4 +92,67 @@ func (s *Storage) GetAppById(ctx context.Context, appID int32) (*models.App, err
 	appModel := s.cvt.AppToModel(schema)
 
 	return &appModel, nil
+}
+
+type MockDatabase struct {
+	mu         sync.Mutex
+	usersTable map[string]models.User
+	appTable   map[int32]models.App
+	appId      int32
+}
+
+func NewMockDatabase() MockDatabase {
+	return MockDatabase{
+		usersTable: make(map[string]models.User),
+		appTable:   make(map[int32]models.App),
+	}
+}
+
+func (m *MockDatabase) SaveUser(ctx context.Context, email string, passHash []byte) (uuid.UUID, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	u := uuid.New()
+	if _, ok := m.usersTable[email]; ok {
+		return uuid.UUID{}, fmt.Errorf("err: user already exists")
+	}
+	m.usersTable[u.String()] = models.User{
+		ID:       u,
+		Email:    email,
+		PassHash: passHash,
+	}
+	m.usersTable[email] = models.User{
+		ID:       u,
+		Email:    email,
+		PassHash: passHash,
+	}
+	return u, nil
+}
+
+func (m *MockDatabase) GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	u := m.usersTable[email]
+	return &u, nil
+}
+
+func (m *MockDatabase) GetAppById(ctx context.Context, appID int32) (*models.App, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	app := m.appTable[appID]
+	return &app, nil
+}
+
+func (m *MockDatabase) SaveApp(ctx context.Context, app models.App) (int32, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.appTable[m.appId] = app
+	id := m.appId
+	m.appId += 1
+	return id, nil
+}
+
+func (m *MockDatabase) SaveAppById(ctx context.Context, id int32, app models.App) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.appTable[id] = app
 }
