@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	AdminPanel_Ping_FullMethodName             = "/admin_panel.AdminPanel/Ping"
 	AdminPanel_CreateDiscipline_FullMethodName = "/admin_panel.AdminPanel/CreateDiscipline"
+	AdminPanel_CreateUser_FullMethodName       = "/admin_panel.AdminPanel/CreateUser"
 )
 
 // AdminPanelClient is the client API for AdminPanel service.
@@ -31,6 +32,7 @@ const (
 type AdminPanelClient interface {
 	Ping(ctx context.Context, in *PingMessage, opts ...grpc.CallOption) (*PingMessage, error)
 	CreateDiscipline(ctx context.Context, in *CreateDisciplineRequest, opts ...grpc.CallOption) (*CreateDisciplineResponse, error)
+	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 }
 
 type adminPanelClient struct {
@@ -61,6 +63,16 @@ func (c *adminPanelClient) CreateDiscipline(ctx context.Context, in *CreateDisci
 	return out, nil
 }
 
+func (c *adminPanelClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateUserResponse)
+	err := c.cc.Invoke(ctx, AdminPanel_CreateUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminPanelServer is the server API for AdminPanel service.
 // All implementations must embed UnimplementedAdminPanelServer
 // for forward compatibility.
@@ -69,6 +81,7 @@ func (c *adminPanelClient) CreateDiscipline(ctx context.Context, in *CreateDisci
 type AdminPanelServer interface {
 	Ping(context.Context, *PingMessage) (*PingMessage, error)
 	CreateDiscipline(context.Context, *CreateDisciplineRequest) (*CreateDisciplineResponse, error)
+	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	mustEmbedUnimplementedAdminPanelServer()
 }
 
@@ -84,6 +97,9 @@ func (UnimplementedAdminPanelServer) Ping(context.Context, *PingMessage) (*PingM
 }
 func (UnimplementedAdminPanelServer) CreateDiscipline(context.Context, *CreateDisciplineRequest) (*CreateDisciplineResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateDiscipline not implemented")
+}
+func (UnimplementedAdminPanelServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
 }
 func (UnimplementedAdminPanelServer) mustEmbedUnimplementedAdminPanelServer() {}
 func (UnimplementedAdminPanelServer) testEmbeddedByValue()                    {}
@@ -142,6 +158,24 @@ func _AdminPanel_CreateDiscipline_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AdminPanel_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminPanelServer).CreateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminPanel_CreateUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminPanelServer).CreateUser(ctx, req.(*CreateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AdminPanel_ServiceDesc is the grpc.ServiceDesc for AdminPanel service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -156,6 +190,10 @@ var AdminPanel_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateDiscipline",
 			Handler:    _AdminPanel_CreateDiscipline_Handler,
+		},
+		{
+			MethodName: "CreateUser",
+			Handler:    _AdminPanel_CreateUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -2,6 +2,8 @@ package adminpanelgrpc
 
 import (
 	"context"
+	"github.com/curtrika/UMetrika_server/internal/converter"
+	"github.com/curtrika/UMetrika_server/internal/domain/models"
 	"log"
 	"net/http"
 
@@ -14,9 +16,13 @@ import (
 type serverAPI struct {
 	adminpanelv1.UnimplementedAdminPanelServer
 	adminPanel AdminPanel
+	cvt        converter.GRPCConverter
 }
 
-type AdminPanel interface{}
+type AdminPanel interface {
+	// TODO: подумать над тем стоит ли выносить это по модулям. Наверное, да
+	CreateUser(ctx context.Context, user models.User) (*models.User, error)
+}
 
 func Register(gRPCServer *grpc.Server, adminPanel AdminPanel) {
 	adminpanelv1.RegisterAdminPanelServer(gRPCServer, &serverAPI{adminPanel: adminPanel})
@@ -50,4 +56,15 @@ func RunRest(ctx context.Context) {
 
 func (s *serverAPI) Ping(ctx context.Context, req *adminpanelv1.PingMessage) (*adminpanelv1.PingMessage, error) {
 	return req, nil
+}
+
+func (s *serverAPI) CreateUser(ctx context.Context, req *adminpanelv1.CreateUserRequest) (*adminpanelv1.CreateUserResponse, error) {
+	userModel := s.cvt.UserToModel(req.UserData)
+	newUser, err := s.adminPanel.CreateUser(ctx, *userModel)
+	if err != nil {
+		return nil, err
+	}
+	return &adminpanelv1.CreateUserResponse{
+		NewUser: s.cvt.ModelToUser(newUser),
+	}, nil
 }

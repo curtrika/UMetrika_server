@@ -94,6 +94,25 @@ func (s *Storage) GetAppById(ctx context.Context, appID int32) (*models.App, err
 	return &appModel, nil
 }
 
+func (s *Storage) CreateUser(ctx context.Context, user models.User) (*models.User, error) {
+	const op = "storage.CreateUser"
+
+	q := `INSERT INTO users (
+    	full_name,
+    	email,
+    	created_at,
+    	updated_at
+	) VALUES (
+    	$1, $2, now(), now()
+	) RETURNING id;`
+
+	if err := s.db.QueryRowContext(ctx, q, user.FullName, user.Email).Scan(&user.Id); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return &user, nil
+}
+
 type MockDatabase struct {
 	mu         sync.Mutex
 	usersTable map[string]models.User
@@ -116,12 +135,12 @@ func (m *MockDatabase) SaveUser(ctx context.Context, email string, passHash []by
 		return uuid.UUID{}, fmt.Errorf("err: user already exists")
 	}
 	m.usersTable[u.String()] = models.User{
-		ID:       u,
+		Id:       u,
 		Email:    email,
 		PassHash: passHash,
 	}
 	m.usersTable[email] = models.User{
-		ID:       u,
+		Id:       u,
 		Email:    email,
 		PassHash: passHash,
 	}
