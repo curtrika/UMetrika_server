@@ -26,6 +26,7 @@ require (
 	github.com/pengdaCN/goverter v1.0.8 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/rs/cors v1.11.1 // indirect
 	github.com/samber/lo v1.28.2 // indirect
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
 	golang.org/x/mod v0.17.0 // indirect

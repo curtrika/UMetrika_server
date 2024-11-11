@@ -4,6 +4,7 @@ import (
 	"context"
 	adminpanelv1 "github.com/curtrika/UMetrika_server/pkg/proto/admin_panel/v1"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/rs/cors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
@@ -36,7 +37,16 @@ func RunRest() {
 
 	log.Printf("server listening at 8081")
 
-	if err := http.ListenAndServe(":8081", mux); err != nil {
+	withCors := cors.New(cors.Options{
+		AllowOriginFunc:  func(origin string) bool { return true },
+		AllowedMethods:   []string{"GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"ACCEPT", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}).Handler(mux)
+
+	if err := http.ListenAndServe(":8081", withCors); err != nil {
 		panic(err)
 	}
 }
