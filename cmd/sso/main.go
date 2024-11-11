@@ -1,12 +1,15 @@
 package main
 
 import (
-	"github.com/curtrika/UMetrika_server/internal/app"
-	"github.com/curtrika/UMetrika_server/internal/config"
+	"context"
 	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/curtrika/UMetrika_server/internal/app"
+	"github.com/curtrika/UMetrika_server/internal/config"
+	"github.com/curtrika/UMetrika_server/internal/storage"
 )
 
 // TODO: вынести в отдельный модуль
@@ -21,7 +24,14 @@ func main() {
 
 	log := setupLogger(cfg.Env)
 
-	application := app.Init(log, cfg.GRPC.Port, cfg.DatabaseURL, cfg.TokenTTL)
+	database, err := storage.DatabaseInit(cfg.DatabaseURL)
+	if err != nil {
+		panic(err)
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	application := app.Init(ctx, log, cfg.GRPC.Port, cfg.TokenTTL, database)
 
 	go func() {
 		application.GRPCServer.MustRun()
@@ -32,6 +42,7 @@ func main() {
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
 
 	<-stop
+	cancel()
 	application.GRPCServer.Stop()
 	log.Info("Gracefully stopped")
 }

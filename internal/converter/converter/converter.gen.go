@@ -4,9 +4,55 @@
 package converter
 
 import (
+	converter "github.com/curtrika/UMetrika_server/internal/converter"
 	models "github.com/curtrika/UMetrika_server/internal/domain/models"
 	schemas "github.com/curtrika/UMetrika_server/internal/storage/schemas"
+	v1 "github.com/curtrika/UMetrika_server/pkg/proto/admin_panel/v1"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+	"time"
 )
+
+type GRPCConverterImpl struct{}
+
+func (c *GRPCConverterImpl) ModelToUser(source *models.User) *v1.User {
+	var pV1User *v1.User
+	if source != nil {
+		var v1User v1.User
+		v1User.Id = converter.UUIDToString((*source).Id)
+		v1User.FullName = (*source).FullName
+		v1User.Email = (*source).Email
+		v1User.Password = (*source).Password
+		v1User.CreatedAt = converter.TimeToTimestamp((*source).CreatedAt)
+		v1User.UpdatedAt = converter.TimeToTimestamp((*source).UpdatedAt)
+		v1User.DeletedAt = converter.TimeToTimestamp((*source).DeletedAt)
+		pV1User = &v1User
+	}
+	return pV1User
+}
+func (c *GRPCConverterImpl) UserToModel(source *v1.User) *models.User {
+	var pModelsUser *models.User
+	if source != nil {
+		var modelsUser models.User
+		modelsUser.Id = converter.StringToUUID((*source).Id)
+		modelsUser.FullName = (*source).FullName
+		modelsUser.Email = (*source).Email
+		modelsUser.Password = (*source).Password
+		modelsUser.CreatedAt = c.pTimestamppbTimestampToTimeTime((*source).CreatedAt)
+		modelsUser.UpdatedAt = c.pTimestamppbTimestampToTimeTime((*source).UpdatedAt)
+		modelsUser.DeletedAt = c.pTimestamppbTimestampToTimeTime((*source).DeletedAt)
+		pModelsUser = &modelsUser
+	}
+	return pModelsUser
+}
+func (c *GRPCConverterImpl) pTimestamppbTimestampToTimeTime(source *timestamppb.Timestamp) time.Time {
+	var timeTime time.Time
+	if source != nil {
+		var timeTime2 time.Time
+		_ = (*source)
+		timeTime = timeTime2
+	}
+	return timeTime
+}
 
 type PsqlConverterImpl struct{}
 
