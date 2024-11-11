@@ -4,14 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
+	"time"
+
 	"github.com/curtrika/UMetrika_server/internal/domain/models"
 	"github.com/curtrika/UMetrika_server/internal/helpers/jwt"
 	"github.com/curtrika/UMetrika_server/internal/helpers/logger/sl"
 	storage "github.com/curtrika/UMetrika_server/internal/storage/errs"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
-	"log/slog"
-	"time"
 )
 
 // TODO: вынести на кладбище ошибок
@@ -116,7 +117,7 @@ func (a *Auth) RegisterNewUser(ctx context.Context, email string, pass string) (
 	log.Info("registering user")
 
 	// generated hash and salt for password
-	passHash, err := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost) //TODO: не забыть заменить DefaultCost на что то понадежнее
+	passHash, err := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost) // TODO: не забыть заменить DefaultCost на что то понадежнее
 	if err != nil {
 		log.Error("failed to generate password hash", sl.Err(err))
 		return uuid.Nil, fmt.Errorf("%s: %w", op, err)

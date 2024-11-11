@@ -2,9 +2,10 @@ package admin_panel
 
 import (
 	"context"
+	"log/slog"
+
 	"github.com/curtrika/UMetrika_server/internal/domain/models"
 	"github.com/google/uuid"
-	"log/slog"
 )
 
 type AdminPanel struct {
@@ -13,7 +14,7 @@ type AdminPanel struct {
 }
 
 type Provider interface {
-	//TODO: сюда временно воообще все методы напишем
+	// TODO: сюда временно воообще все методы напишем
 	CreateUser(ctx context.Context, user models.User) (*models.User, error)
 	ReadUser(ctx context.Context, userID uuid.UUID) (*models.User, error)
 	UpdateUser(ctx context.Context, user models.User) (*models.User, error)

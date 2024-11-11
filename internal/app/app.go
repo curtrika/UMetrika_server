@@ -21,6 +21,11 @@ type Repository interface {
 	GetUserByEmail(ctx context.Context, email string) (*models.User, error)
 	// SaveApp(ctx context.Context, app models.App) (uuid.UUID, error)
 	GetAppById(ctx context.Context, appID int32) (*models.App, error)
+
+	CreateUser(ctx context.Context, user models.User) (*models.User, error)
+	ReadUser(ctx context.Context, userID uuid.UUID) (*models.User, error)
+	UpdateUser(ctx context.Context, user models.User) (*models.User, error)
+	DeleteUser(ctx context.Context, userID uuid.UUID) error
 }
 
 func Init(

@@ -5,8 +5,9 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	storage "github.com/curtrika/UMetrika_server/internal/storage/schemas"
 	"sync"
+
+	storage "github.com/curtrika/UMetrika_server/internal/storage/schemas"
 
 	"github.com/curtrika/UMetrika_server/internal/converter"
 	"github.com/curtrika/UMetrika_server/internal/domain/models"
@@ -67,7 +68,7 @@ func (s *Storage) SaveApp(ctx context.Context, app models.App) (int32, error) {
 	return 0, nil
 }
 
-func (s *Storage) GetAppById(ctx context.Context, appID uuid.UUID) (*models.App, error) {
+func (s *Storage) GetAppById(ctx context.Context, appID int32) (*models.App, error) {
 	const op = "storage.GetUserByEmail"
 
 	q := `select json_build_object(
