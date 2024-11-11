@@ -2,7 +2,10 @@
 -- +goose StatementBegin
 create table if not exists school (
     id uuid primary key default gen_random_uuid(),
-    large_name varchar(1024) not null -- large name
+    large_name varchar(1024) not null, -- example Муниципальное бюджетное общеобразовательное...
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now(),
+    deleted_at timestamp default null
 );
 
 create table if not exists classes (
@@ -10,7 +13,10 @@ create table if not exists classes (
     grade int not null default 1,
     title varchar(2),
     main_teacher_id uuid not null references users(id),
-    release_date timestamp
+    release_date timestamp,
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now(),
+    deleted_at timestamp default null
 );
 
 alter table if exists users
@@ -23,6 +29,7 @@ alter table if exists users
 
 -- +goose Down
 -- +goose StatementBegin
+alter table if exists users drop column if exists classes_id;
 alter table if exists users drop column if exists school_id;
 drop table if exists classes;
 drop table if exists school;
