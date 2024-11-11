@@ -10,7 +10,9 @@ import (
 	"github.com/curtrika/UMetrika_server/internal/converter"
 	"github.com/curtrika/UMetrika_server/internal/domain/models"
 	"github.com/curtrika/UMetrika_server/internal/storage/schemas"
+	storage "github.com/curtrika/UMetrika_server/internal/storage/sqlc_gen"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 
 	_ "github.com/lib/pq"
 )
@@ -19,6 +21,7 @@ import (
 type Storage struct {
 	cvt converter.PsqlConverter
 	db  *sql.DB
+	*storage.Queries
 }
 
 func DatabaseInit(databaseURL string) (*Storage, error) {
@@ -26,13 +29,19 @@ func DatabaseInit(databaseURL string) (*Storage, error) {
 	if err != nil {
 		return nil, err
 	}
+	conn, err := pgx.Connect(context.Background(), databaseURL)
+	if err != nil {
+		return nil, err
+	}
 
 	//if err := db.Ping(); err != nil {
 	//	return nil, err
 	//}
+	queries := storage.New(conn)
 
 	return &Storage{
-		db: db,
+		db:      db,
+		Queries: queries,
 	}, nil
 }
 
