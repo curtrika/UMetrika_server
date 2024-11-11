@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: my_postgres
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  goose:
+    build:
+      context: .
+    container_name: goose_migrator
+    environment:
+      PGUSER: myuser
+      PGPASSWORD: mypassword
+      PGDATABASE: mydb
+      PGHOST: postgres
+      PGPORT: 5432
+    volumes:
+      - ./db/migrations:/app/db/migrations
+    entrypoint: ["goose", "-dir", "/app/db/migrations", "postgres", "postgres://myuser:mypassword@postgres:5432/mydb?sslmode=disable"]
+
+volumes:
+  pgdata:
