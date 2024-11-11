@@ -4,6 +4,9 @@ import (
 	"context"
 	"github.com/curtrika/UMetrika_server/internal/converter"
 	"github.com/curtrika/UMetrika_server/internal/domain/models"
+	"github.com/google/uuid"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"log"
 	"net/http"
 
@@ -23,6 +26,9 @@ type serverAPI struct {
 type AdminPanel interface {
 	// TODO: подумать над тем стоит ли выносить это по модулям. Наверное, да
 	CreateUser(ctx context.Context, user models.User) (*models.User, error)
+	ReadUser(ctx context.Context, userID uuid.UUID) (*models.User, error)
+	UpdateUser(ctx context.Context, userData models.User) (*models.User, error)
+	DeleteUser(ctx context.Context, userID uuid.UUID) error
 }
 
 func Register(gRPCServer *grpc.Server, adminPanel AdminPanel) {
@@ -40,7 +46,7 @@ func RunRest(ctx context.Context) {
 	mux := http.NewServeMux()
 
 	mux.Handle("/", grpcHandler)
-	srv := http.Server{Addr: url, Handler: mux}
+	//srv := http.Server{Addr: url, Handler: mux}
 
 	log.Printf("server listening at 8081")
 
@@ -63,7 +69,7 @@ func (s *serverAPI) Ping(ctx context.Context, req *adminpanelv1.PingMessage) (*a
 }
 
 func (s *serverAPI) CreateUser(ctx context.Context, req *adminpanelv1.CreateUserRequest) (*adminpanelv1.CreateUserResponse, error) {
-	userModel := s.cvt.UserToModel(req.UserData)
+	userModel := s.cvt.UserToModel(req.User)
 	newUser, err := s.adminPanel.CreateUser(ctx, *userModel)
 	if err != nil {
 		return nil, err
@@ -71,4 +77,39 @@ func (s *serverAPI) CreateUser(ctx context.Context, req *adminpanelv1.CreateUser
 	return &adminpanelv1.CreateUserResponse{
 		NewUser: s.cvt.ModelToUser(newUser),
 	}, nil
+}
+
+func (s *serverAPI) ReadUser(ctx context.Context, req *adminpanelv1.ReadUserRequest) (*adminpanelv1.ReadUserResponse, error) {
+	if req.UserId == "" {
+		return nil, status.Error(codes.InvalidArgument, "missing user id")
+	}
+
+	parsedUserId, err := uuid.Parse(req.UserId)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "missing user id")
+	}
+
+	user, err := s.adminPanel.ReadUser(ctx, parsedUserId)
+
+	return &adminpanelv1.ReadUserResponse{
+		User: s.cvt.ModelToUser(user),
+	}, nil
+}
+
+func (s *serverAPI) UpdateUser(ctx context.Context, req *adminpanelv1.UpdateUserRequest) (*adminpanelv1.UpdateUserResponse, error) {
+	//userModel := s.cvt.UserToModel(req.User)
+	//newUser, err := s.adminPanel.CreateUser(ctx, *userModel)
+	//if err != nil {
+	//	return nil, err
+	//}
+	return nil, nil
+}
+
+func (s *serverAPI) DeleteUser(ctx context.Context, req *adminpanelv1.DeleteUserRequest) (*adminpanelv1.DeleteUserResponse, error) {
+	//userModel := s.cvt.UserToModel(req.User)
+	//newUser, err := s.adminPanel.CreateUser(ctx, *userModel)
+	//if err != nil {
+	//	return nil, err
+	//}
+	return nil, nil
 }

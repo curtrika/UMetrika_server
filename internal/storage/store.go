@@ -67,7 +67,7 @@ func (s *Storage) SaveApp(ctx context.Context, app models.App) (int32, error) {
 	return 0, nil
 }
 
-func (s *Storage) GetAppById(ctx context.Context, appID int32) (*models.App, error) {
+func (s *Storage) GetAppById(ctx context.Context, appID uuid.UUID) (*models.App, error) {
 	const op = "storage.GetUserByEmail"
 
 	q := `select json_build_object(
@@ -97,20 +97,52 @@ func (s *Storage) GetAppById(ctx context.Context, appID int32) (*models.App, err
 func (s *Storage) CreateUser(ctx context.Context, user models.User) (*models.User, error) {
 	const op = "storage.CreateUser"
 
-	q := `INSERT INTO users (
-    	full_name,
-    	email,
-    	created_at,
-    	updated_at
-	) VALUES (
-    	$1, $2, now(), now()
-	) RETURNING id;`
+	params := []any{user.FirstName, user.MiddleName, user.LastName, user.Email, user.PassHash, user.RoleTitle, user.SchoolID, user.ClassesID}
+	q := `INSERT INTO users (first_name, middle_name, last_name, email, role_title, school_id, classes_id)
+		VALUES (:id, :first_name, :middle_name, :last_name, :email, :pass_hash, :role_title, :school_id, :classes_id)
+		ON CONFLICT DO NOTHING;`
 
-	if err := s.db.QueryRowContext(ctx, q, user.FullName, user.Email).Scan(&user.Id); err != nil {
+	var bs []byte
+	if err := s.db.QueryRowContext(ctx, q, params).Scan(&bs); err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &user, nil
+	var schema storage.UserSchema
+	if err := json.Unmarshal(bs, &schema); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	userModel := s.cvt.UserToModel(schema)
+
+	return &userModel, nil
+}
+
+func (s *Storage) ReadUser(ctx context.Context, userID uuid.UUID) (*models.User, error) {
+	const op = "storage.ReadUser"
+
+	q := `SELECT * FROM users WHERE id = $1;`
+
+	var bs []byte
+	if err := s.db.QueryRowContext(ctx, q, userID).Scan(&bs); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	var schema storage.UserSchema
+	if err := json.Unmarshal(bs, &schema); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	userModel := s.cvt.UserToModel(schema)
+
+	return &userModel, nil
+}
+
+func (s *Storage) UpdateUser(ctx context.Context, user models.User) (*models.User, error) {
+	return nil, nil
+}
+
+func (s *Storage) DeleteUser(ctx context.Context, userID uuid.UUID) error {
+	return nil
 }
 
 type MockDatabase struct {
@@ -135,12 +167,12 @@ func (m *MockDatabase) SaveUser(ctx context.Context, email string, passHash []by
 		return uuid.UUID{}, fmt.Errorf("err: user already exists")
 	}
 	m.usersTable[u.String()] = models.User{
-		Id:       u,
+		ID:       u,
 		Email:    email,
 		PassHash: passHash,
 	}
 	m.usersTable[email] = models.User{
-		Id:       u,
+		ID:       u,
 		Email:    email,
 		PassHash: passHash,
 	}

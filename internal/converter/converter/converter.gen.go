@@ -14,43 +14,35 @@ import (
 
 type GRPCConverterImpl struct{}
 
-func (c *GRPCConverterImpl) ModelToUser(source *models.User) *v1.User {
-	var pV1User *v1.User
-	if source != nil {
-		var v1User v1.User
-		v1User.Id = converter.UUIDToString((*source).ID)
-		v1User.FirstName = (*source).FirstName
-		v1User.MiddleName = (*source).MiddleName
-		v1User.LastName = (*source).LastName
-		v1User.Email = (*source).Email
-		v1User.RoleTitle = (*source).RoleTitle
-		v1User.SchoolId = converter.UUIDToString((*source).SchoolID)
-		v1User.ClassesId = converter.UUIDToString((*source).ClassesID)
-		v1User.CreatedAt = converter.TimeToTimestamp((*source).CreatedAt)
-		v1User.UpdatedAt = converter.TimeToTimestamp((*source).UpdatedAt)
-		v1User.DeletedAt = converter.TimeToTimestamp((*source).DeletedAt)
-		pV1User = &v1User
-	}
-	return pV1User
+func (c *GRPCConverterImpl) ModelToUser(source models.User) v1.User {
+	var v1User v1.User
+	v1User.Id = converter.UUIDToString(source.ID)
+	v1User.FirstName = source.FirstName
+	v1User.MiddleName = source.MiddleName
+	v1User.LastName = source.LastName
+	v1User.Email = source.Email
+	v1User.RoleTitle = source.RoleTitle
+	v1User.SchoolId = converter.UUIDToString(source.SchoolID)
+	v1User.ClassesId = converter.UUIDToString(source.ClassesID)
+	v1User.CreatedAt = converter.TimeToTimestamp(source.CreatedAt)
+	v1User.UpdatedAt = converter.TimeToTimestamp(source.UpdatedAt)
+	v1User.DeletedAt = converter.TimeToTimestamp(source.DeletedAt)
+	return v1User
 }
-func (c *GRPCConverterImpl) UserToModel(source *v1.User) *models.User {
-	var pModelsUser *models.User
-	if source != nil {
-		var modelsUser models.User
-		modelsUser.ID = converter.StringToUUID((*source).Id)
-		modelsUser.FirstName = (*source).FirstName
-		modelsUser.MiddleName = (*source).MiddleName
-		modelsUser.LastName = (*source).LastName
-		modelsUser.Email = (*source).Email
-		modelsUser.RoleTitle = (*source).RoleTitle
-		modelsUser.SchoolID = converter.StringToUUID((*source).SchoolId)
-		modelsUser.ClassesID = converter.StringToUUID((*source).ClassesId)
-		modelsUser.CreatedAt = c.pTimestamppbTimestampToTimeTime((*source).CreatedAt)
-		modelsUser.UpdatedAt = c.pTimestamppbTimestampToTimeTime((*source).UpdatedAt)
-		modelsUser.DeletedAt = c.pTimestamppbTimestampToTimeTime((*source).DeletedAt)
-		pModelsUser = &modelsUser
-	}
-	return pModelsUser
+func (c *GRPCConverterImpl) UserToModel(source v1.User) models.User {
+	var modelsUser models.User
+	modelsUser.ID = converter.StringToUUID(source.Id)
+	modelsUser.FirstName = source.FirstName
+	modelsUser.MiddleName = source.MiddleName
+	modelsUser.LastName = source.LastName
+	modelsUser.Email = source.Email
+	modelsUser.RoleTitle = source.RoleTitle
+	modelsUser.SchoolID = converter.StringToUUID(source.SchoolId)
+	modelsUser.ClassesID = converter.StringToUUID(source.ClassesId)
+	modelsUser.CreatedAt = c.pTimestamppbTimestampToTimeTime(source.CreatedAt)
+	modelsUser.UpdatedAt = c.pTimestamppbTimestampToTimeTime(source.UpdatedAt)
+	modelsUser.DeletedAt = c.pTimestamppbTimestampToTimeTime(source.DeletedAt)
+	return modelsUser
 }
 func (c *GRPCConverterImpl) pTimestamppbTimestampToTimeTime(source *timestamppb.Timestamp) time.Time {
 	var timeTime time.Time
