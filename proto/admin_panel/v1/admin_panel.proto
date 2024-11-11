@@ -6,7 +6,7 @@ option go_package = "github.com/curtrika/UMetrika_server/pkg/proto/admin_panel/v
 
 import "google/api/annotations.proto";
 
-// AdminPanel is service for managing school info and users
+// AdminPanel is a service for managing school info, users, and psychological tests.
 service AdminPanel {
   rpc Ping (PingMessage) returns (PingMessage) {
     option (google.api.http) = {
@@ -15,6 +15,31 @@ service AdminPanel {
   }
 
   rpc CreateDiscipline (CreateDisciplineRequest) returns (CreateDisciplineResponse);
+
+  // PsychologicalType RPCs
+  rpc CreatePsychologicalType (CreatePsychologicalTypeRequest) returns (PsychologicalTypeResponse);
+  rpc GetPsychologicalType (GetPsychologicalTypeRequest) returns (PsychologicalTypeResponse);
+  rpc ListPsychologicalTypes (ListPsychologicalTypesRequest) returns (ListPsychologicalTypesResponse);
+
+  // PsychologicalTest RPCs
+  rpc CreatePsychologicalTest (CreatePsychologicalTestRequest) returns (PsychologicalTestResponse);
+  rpc GetPsychologicalTest (GetPsychologicalTestRequest) returns (PsychologicalTestResponse);
+  rpc ListPsychologicalTests (ListPsychologicalTestsRequest) returns (ListPsychologicalTestsResponse);
+
+  // Question RPCs
+  rpc CreateQuestion (CreateQuestionRequest) returns (QuestionResponse);
+  rpc GetQuestion (GetQuestionRequest) returns (QuestionResponse);
+  rpc ListQuestions (ListQuestionsRequest) returns (ListQuestionsResponse);
+
+  // Answer RPCs
+  rpc CreateAnswer (CreateAnswerRequest) returns (AnswerResponse);
+  rpc GetAnswer (GetAnswerRequest) returns (AnswerResponse);
+  rpc ListAnswers (ListAnswersRequest) returns (ListAnswersResponse);
+
+  // PsychologicalPerformance RPCs
+  rpc CreatePsychologicalPerformance (CreatePsychologicalPerformanceRequest) returns (PsychologicalPerformanceResponse);
+  rpc GetPsychologicalPerformance (GetPsychologicalPerformanceRequest) returns (PsychologicalPerformanceResponse);
+  rpc ListPsychologicalPerformances (ListPsychologicalPerformancesRequest) returns (ListPsychologicalPerformancesResponse);
 }
 
 message PingMessage {
@@ -39,4 +64,151 @@ message Error {
 message Discipline {
   string id = 1;
   string title = 2;
+}
+
+///////////////////////////////
+// Models and Requests for Psychological System
+///////////////////////////////
+
+message PsychologicalType {
+  string id = 1;
+  string title = 2;
+}
+
+message CreatePsychologicalTypeRequest {
+  string title = 1;
+}
+
+message GetPsychologicalTypeRequest {
+  string id = 1;
+}
+
+message PsychologicalTypeResponse {
+  PsychologicalType psychological_type = 1;
+  repeated Error errors = 2;
+}
+
+message ListPsychologicalTypesRequest {}
+
+message ListPsychologicalTypesResponse {
+  repeated PsychologicalType psychological_types = 1;
+  repeated Error errors = 2;
+}
+
+message PsychologicalTest {
+  string id = 1;
+  string title = 2;
+  string first_question_id = 3;
+  string type_id = 4;
+  string owner_id = 5;
+}
+
+message CreatePsychologicalTestRequest {
+  string title = 1;
+  string first_question_id = 2;
+  string type_id = 3;
+  string owner_id = 4;
+}
+
+message GetPsychologicalTestRequest {
+  string id = 1;
+}
+
+message PsychologicalTestResponse {
+  PsychologicalTest psychological_test = 1;
+  repeated Error errors = 2;
+}
+
+message ListPsychologicalTestsRequest {}
+
+message ListPsychologicalTestsResponse {
+  repeated PsychologicalTest psychological_tests = 1;
+  repeated Error errors = 2;
+}
+
+message Question {
+  string id = 1;
+  string next_question_id = 2;
+  int32 number = 3;
+  string first_answer_id = 4;
+  string title = 5;
+}
+
+message CreateQuestionRequest {
+  string next_question_id = 1;
+  int32 number = 2;
+  string first_answer_id = 3;
+  string title = 4;
+}
+
+message GetQuestionRequest {
+  string id = 1;
+}
+
+message QuestionResponse {
+  Question question = 1;
+  repeated Error errors = 2;
+}
+
+message ListQuestionsRequest {}
+
+message ListQuestionsResponse {
+  repeated Question questions = 1;
+  repeated Error errors = 2;
+}
+
+message Answer {
+  string id = 1;
+  string next_answer_id = 2;
+  string title = 3;
+}
+
+message CreateAnswerRequest {
+  string next_answer_id = 1;
+  string title = 2;
+}
+
+message GetAnswerRequest {
+  string id = 1;
+}
+
+message AnswerResponse {
+  Answer answer = 1;
+  repeated Error errors = 2;
+}
+
+message ListAnswersRequest {}
+
+message ListAnswersResponse {
+  repeated Answer answers = 1;
+  repeated Error errors = 2;
+}
+
+message PsychologicalPerformance {
+  string id = 1;
+  string owner_id = 2;
+  string psychological_test_id = 3;
+  string started_at = 4; // Use ISO 8601 format (e.g., "2024-11-12T08:00:00Z")
+}
+
+message CreatePsychologicalPerformanceRequest {
+  string owner_id = 1;
+  string psychological_test_id = 2;
+  string started_at = 3; // Use ISO 8601 format
+}
+
+message GetPsychologicalPerformanceRequest {
+  string id = 1;
+}
+
+message PsychologicalPerformanceResponse {
+  PsychologicalPerformance psychological_performance = 1;
+  repeated Error errors = 2;
+}
+
+message ListPsychologicalPerformancesRequest {}
+
+message ListPsychologicalPerformancesResponse {
+  repeated PsychologicalPerformance psychological_performances = 1;
+  repeated Error errors = 2;
 }
