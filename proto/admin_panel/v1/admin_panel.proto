@@ -14,6 +14,31 @@ service AdminPanel {
     };
   }
 
+  // USER
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post: "/admin/user"
+    };
+  }
+
+  rpc ReadUser (ReadUserRequest) returns (ReadUserResponse) {
+    option (google.api.http) = {
+      get: "/admin/user/{id}"
+    };
+  }
+
+  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      get: "/admin/user"
+    };
+  }
+
+  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse) {
+    option (google.api.http) = {
+      delete: "/admin/user"
+    };
+  }
+
   rpc CreateDiscipline (CreateDisciplineRequest) returns (CreateDisciplineResponse);
 }
 
@@ -21,13 +46,59 @@ message PingMessage {
   int64 id = 1;
 }
 
+// USER
+message User {
+  string id = 1;
+  string email = 2;
+  string password = 3;
+  string role_title = 4;
+  string school_id = 5;
+  string class_id = 6;
+}
+
+message CreateUserRequest {
+  User user = 10;
+}
+
+message CreateUserResponse {
+  repeated Error errors = 1;
+  User new_user = 10;
+}
+
+message ReadUserRequest {
+  string user_id = 10;
+}
+
+message ReadUserResponse {
+  repeated Error errors = 1;
+  User user = 10;
+}
+
+message UpdateUserRequest {
+  User user = 1;
+}
+
+message UpdateUserResponse {
+  repeated Error errors = 1;
+  User updated_user = 10;
+}
+
+message DeleteUserRequest {
+  string user_id = 10;
+}
+
+message DeleteUserResponse {
+  repeated Error errors = 1;
+  User user = 10;
+}
+
 message CreateDisciplineRequest {
-  string title = 1;
+  string title = 10;
 }
 
 message CreateDisciplineResponse {
-  Discipline discipline = 1;
-  repeated Error errors = 2;
+  repeated Error errors = 1;
+  Discipline discipline = 10;
 }
 
 message Error {
