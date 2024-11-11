@@ -1,4 +1,4 @@
-package schemas
+package models
 
 type App struct {
 	ID     int32

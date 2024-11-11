@@ -19,35 +19,30 @@ service AdminPanel {
   rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
     option (google.api.http) = {
       post: "/admin/user"
+      body: "*"
     };
   }
 
   rpc ReadUser (ReadUserRequest) returns (ReadUserResponse) {
     option (google.api.http) = {
-      get: "/admin/user/{id}"
+      get: "/admin/user/{user_id}"
     };
   }
 
   rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
     option (google.api.http) = {
-      get: "/admin/user"
+      put: "/admin/user"
+      body: "*"
     };
   }
 
   rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse) {
     option (google.api.http) = {
-      delete: "/admin/user"
+      delete: "/admin/user/{user_id}"
     };
   }
 
   rpc CreateDiscipline (CreateDisciplineRequest) returns (CreateDisciplineResponse);
-
-  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
-    option (google.api.http) = {
-      post: "/admin_panel/user"
-      body: "*"
-    };
-  }
 }
 
 message PingMessage {
@@ -57,11 +52,18 @@ message PingMessage {
 // USER
 message User {
   string id = 1;
-  string email = 2;
-  string password = 3;
-  string role_title = 4;
-  string school_id = 5;
-  string class_id = 6;
+  string first_name = 2;
+  string middle_name = 3;
+  string last_name = 4;
+  string email = 5;
+  string password = 6;
+  string pass_hash = 7; //TODO: говертер почему то ругается
+  string role_title = 8;
+  string school_id = 9;
+  string classes_id = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+  google.protobuf.Timestamp deleted_at= 13;
 }
 
 message CreateUserRequest {
@@ -109,15 +111,6 @@ message CreateDisciplineResponse {
   Discipline discipline = 10;
 }
 
-message CreateUserRequest {
-  User user_data = 10;
-}
-
-message CreateUserResponse {
-  repeated Error error = 1;
-  User new_user = 10;
-}
-
 message Error {
   enum Code {
     UNDEFINED_ERROR = 0;
@@ -127,15 +120,4 @@ message Error {
 message Discipline {
   string id = 1;
   string title = 2;
-}
-
-// TODO: подумать куда положить это дело
-message User {
-  string id = 1;
-  string full_name = 2;
-  string email = 3;
-  string password = 4;
-  google.protobuf.Timestamp created_at = 11;
-  google.protobuf.Timestamp updated_at = 12;
-  google.protobuf.Timestamp deleted_at= 13;
 }

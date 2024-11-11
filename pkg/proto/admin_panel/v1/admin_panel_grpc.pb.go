@@ -20,8 +20,11 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	AdminPanel_Ping_FullMethodName             = "/admin_panel.AdminPanel/Ping"
-	AdminPanel_CreateDiscipline_FullMethodName = "/admin_panel.AdminPanel/CreateDiscipline"
 	AdminPanel_CreateUser_FullMethodName       = "/admin_panel.AdminPanel/CreateUser"
+	AdminPanel_ReadUser_FullMethodName         = "/admin_panel.AdminPanel/ReadUser"
+	AdminPanel_UpdateUser_FullMethodName       = "/admin_panel.AdminPanel/UpdateUser"
+	AdminPanel_DeleteUser_FullMethodName       = "/admin_panel.AdminPanel/DeleteUser"
+	AdminPanel_CreateDiscipline_FullMethodName = "/admin_panel.AdminPanel/CreateDiscipline"
 )
 
 // AdminPanelClient is the client API for AdminPanel service.
@@ -31,8 +34,12 @@ const (
 // AdminPanel is service for managing school info and users
 type AdminPanelClient interface {
 	Ping(ctx context.Context, in *PingMessage, opts ...grpc.CallOption) (*PingMessage, error)
-	CreateDiscipline(ctx context.Context, in *CreateDisciplineRequest, opts ...grpc.CallOption) (*CreateDisciplineResponse, error)
+	// USER
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
+	ReadUser(ctx context.Context, in *ReadUserRequest, opts ...grpc.CallOption) (*ReadUserResponse, error)
+	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
+	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error)
+	CreateDiscipline(ctx context.Context, in *CreateDisciplineRequest, opts ...grpc.CallOption) (*CreateDisciplineResponse, error)
 }
 
 type adminPanelClient struct {
@@ -53,20 +60,50 @@ func (c *adminPanelClient) Ping(ctx context.Context, in *PingMessage, opts ...gr
 	return out, nil
 }
 
-func (c *adminPanelClient) CreateDiscipline(ctx context.Context, in *CreateDisciplineRequest, opts ...grpc.CallOption) (*CreateDisciplineResponse, error) {
+func (c *adminPanelClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateDisciplineResponse)
-	err := c.cc.Invoke(ctx, AdminPanel_CreateDiscipline_FullMethodName, in, out, cOpts...)
+	out := new(CreateUserResponse)
+	err := c.cc.Invoke(ctx, AdminPanel_CreateUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *adminPanelClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
+func (c *adminPanelClient) ReadUser(ctx context.Context, in *ReadUserRequest, opts ...grpc.CallOption) (*ReadUserResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateUserResponse)
-	err := c.cc.Invoke(ctx, AdminPanel_CreateUser_FullMethodName, in, out, cOpts...)
+	out := new(ReadUserResponse)
+	err := c.cc.Invoke(ctx, AdminPanel_ReadUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminPanelClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateUserResponse)
+	err := c.cc.Invoke(ctx, AdminPanel_UpdateUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminPanelClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteUserResponse)
+	err := c.cc.Invoke(ctx, AdminPanel_DeleteUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminPanelClient) CreateDiscipline(ctx context.Context, in *CreateDisciplineRequest, opts ...grpc.CallOption) (*CreateDisciplineResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateDisciplineResponse)
+	err := c.cc.Invoke(ctx, AdminPanel_CreateDiscipline_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,8 +117,12 @@ func (c *adminPanelClient) CreateUser(ctx context.Context, in *CreateUserRequest
 // AdminPanel is service for managing school info and users
 type AdminPanelServer interface {
 	Ping(context.Context, *PingMessage) (*PingMessage, error)
-	CreateDiscipline(context.Context, *CreateDisciplineRequest) (*CreateDisciplineResponse, error)
+	// USER
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
+	ReadUser(context.Context, *ReadUserRequest) (*ReadUserResponse, error)
+	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
+	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error)
+	CreateDiscipline(context.Context, *CreateDisciplineRequest) (*CreateDisciplineResponse, error)
 	mustEmbedUnimplementedAdminPanelServer()
 }
 
@@ -95,11 +136,20 @@ type UnimplementedAdminPanelServer struct{}
 func (UnimplementedAdminPanelServer) Ping(context.Context, *PingMessage) (*PingMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
-func (UnimplementedAdminPanelServer) CreateDiscipline(context.Context, *CreateDisciplineRequest) (*CreateDisciplineResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateDiscipline not implemented")
-}
 func (UnimplementedAdminPanelServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+}
+func (UnimplementedAdminPanelServer) ReadUser(context.Context, *ReadUserRequest) (*ReadUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadUser not implemented")
+}
+func (UnimplementedAdminPanelServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
+}
+func (UnimplementedAdminPanelServer) DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+}
+func (UnimplementedAdminPanelServer) CreateDiscipline(context.Context, *CreateDisciplineRequest) (*CreateDisciplineResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDiscipline not implemented")
 }
 func (UnimplementedAdminPanelServer) mustEmbedUnimplementedAdminPanelServer() {}
 func (UnimplementedAdminPanelServer) testEmbeddedByValue()                    {}
@@ -140,24 +190,6 @@ func _AdminPanel_Ping_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AdminPanel_CreateDiscipline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateDisciplineRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminPanelServer).CreateDiscipline(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AdminPanel_CreateDiscipline_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminPanelServer).CreateDiscipline(ctx, req.(*CreateDisciplineRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _AdminPanel_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateUserRequest)
 	if err := dec(in); err != nil {
@@ -176,6 +208,78 @@ func _AdminPanel_CreateUser_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AdminPanel_ReadUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReadUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminPanelServer).ReadUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminPanel_ReadUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminPanelServer).ReadUser(ctx, req.(*ReadUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminPanel_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminPanelServer).UpdateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminPanel_UpdateUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminPanelServer).UpdateUser(ctx, req.(*UpdateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminPanel_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminPanelServer).DeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminPanel_DeleteUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminPanelServer).DeleteUser(ctx, req.(*DeleteUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminPanel_CreateDiscipline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateDisciplineRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminPanelServer).CreateDiscipline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminPanel_CreateDiscipline_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminPanelServer).CreateDiscipline(ctx, req.(*CreateDisciplineRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AdminPanel_ServiceDesc is the grpc.ServiceDesc for AdminPanel service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -188,12 +292,24 @@ var AdminPanel_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AdminPanel_Ping_Handler,
 		},
 		{
-			MethodName: "CreateDiscipline",
-			Handler:    _AdminPanel_CreateDiscipline_Handler,
-		},
-		{
 			MethodName: "CreateUser",
 			Handler:    _AdminPanel_CreateUser_Handler,
+		},
+		{
+			MethodName: "ReadUser",
+			Handler:    _AdminPanel_ReadUser_Handler,
+		},
+		{
+			MethodName: "UpdateUser",
+			Handler:    _AdminPanel_UpdateUser_Handler,
+		},
+		{
+			MethodName: "DeleteUser",
+			Handler:    _AdminPanel_DeleteUser_Handler,
+		},
+		{
+			MethodName: "CreateDiscipline",
+			Handler:    _AdminPanel_CreateDiscipline_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

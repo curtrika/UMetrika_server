@@ -23,6 +23,7 @@ import (
 type GRPCConverter interface {
 	// goverter:ignore PassHash
 	UserToModel(request *adminpanelv1.User) (response *models.User)
+	// goverter:ignore Password PassHash
 	ModelToUser(request *models.User) (response *adminpanelv1.User)
 }
 

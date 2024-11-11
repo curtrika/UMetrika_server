@@ -5,11 +5,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	storage "github.com/curtrika/UMetrika_server/internal/storage/schemas"
 	"sync"
 
 	"github.com/curtrika/UMetrika_server/internal/converter"
 	"github.com/curtrika/UMetrika_server/internal/domain/models"
-	"github.com/curtrika/UMetrika_server/internal/storage/schemas"
 	"github.com/google/uuid"
 
 	_ "github.com/lib/pq"
@@ -84,7 +84,7 @@ func (s *Storage) GetAppById(ctx context.Context, appID int32) (*models.App, err
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	var schema schemas.AppSchema
+	var schema storage.AppSchema
 	if err := json.Unmarshal(bs, &schema); err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

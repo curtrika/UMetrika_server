@@ -6,12 +6,16 @@ import (
 )
 
 type User struct {
-	Id        uuid.UUID
-	FullName  string
-	Email     string
-	Password  string
-	PassHash  []byte
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time
+	ID         uuid.UUID
+	FirstName  string
+	MiddleName string
+	LastName   string
+	Email      string
+	PassHash   []byte
+	RoleTitle  string
+	SchoolID   uuid.UUID
+	ClassesID  uuid.UUID
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	DeletedAt  time.Time
 }
