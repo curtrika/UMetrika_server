@@ -1,5 +1,5 @@
 -- +goose Up
-CREATE TABLE question (
+CREATE TABLE IF NOT EXISTS question (
     id SERIAL PRIMARY KEY,
     next_question_id INT REFERENCES question(id) ON DELETE SET NULL,
     number INT NOT NULL,

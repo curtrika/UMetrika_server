@@ -1,5 +1,5 @@
 -- +goose Up
-CREATE TABLE psychological_test (
+CREATE TABLE IF NOT EXISTS  psychological_test (
     id SERIAL PRIMARY KEY,
     first_question_id INT REFERENCES question(id) ON DELETE SET NULL,
     type_id INT REFERENCES psychological_type(id) ON DELETE SET NULL,

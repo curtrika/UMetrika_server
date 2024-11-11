@@ -1,5 +1,5 @@
 -- +goose Up
-CREATE TABLE psychological_performance (
+CREATE TABLE IF NOT EXISTS psychological_performance (
     id SERIAL PRIMARY KEY,
     owner_id INT NOT NULL,
     psychological_test_id INT REFERENCES psychological_test(id) ON DELETE CASCADE,

@@ -1,5 +1,5 @@
 -- +goose Up
-CREATE TABLE psychological_type (
+CREATE TABLE IF NOT EXISTS psychological_type (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL
 );
