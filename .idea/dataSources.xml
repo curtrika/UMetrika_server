@@ -6,6 +6,9 @@
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://localhost:9876/inside_study</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="database.pass.proxy.settings" value="false" />
+      </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
