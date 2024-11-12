@@ -5,11 +5,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	schemas "github.com/curtrika/UMetrika_server/internal/storage/schemas"
 	"sync"
 
 	"github.com/curtrika/UMetrika_server/internal/converter"
 	"github.com/curtrika/UMetrika_server/internal/domain/models"
-	"github.com/curtrika/UMetrika_server/internal/storage/schemas"
 	storage "github.com/curtrika/UMetrika_server/internal/storage/sqlc_gen"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -225,14 +225,14 @@ func (m *MockDatabase) CreateQuestion(ctx context.Context, arg storage.CreateQue
 	}, nil
 }
 
-func (m *MockDatabase) CreateUser(ctx context.Context, arg storage.CreateUserParams) (storage.User, error) {
-	// Mock response to simulate a created user
-	return storage.User{
-		ID:       pgtype.UUID{}, // ID from params (could be UUID)
-		Email:    arg.Email,     // Email from params
-		PassHash: arg.PassHash,  // Pass hash from params
-	}, nil
-}
+//func (m *MockDatabase) CreateUser(ctx context.Context, arg storage.CreateUserParams) (storage.User, error) {
+//	// Mock response to simulate a created user
+//	return storage.User{
+//		ID:       pgtype.UUID{}, // ID from params (could be UUID)
+//		Email:    arg.Email,     // Email from params
+//		PassHash: arg.PassHash,  // Pass hash from params
+//	}, nil
+//}
 
 func (m *MockDatabase) GetAnswer(ctx context.Context, id int32) (storage.Answer, error) {
 	// Mock response for fetching an answer

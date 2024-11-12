@@ -31,7 +31,7 @@ type Repository interface {
 	CreatePsychologicalTest(ctx context.Context, arg storage.CreatePsychologicalTestParams) (storage.PsychologicalTest, error)
 	CreatePsychologicalType(ctx context.Context, title string) (storage.PsychologicalType, error)
 	CreateQuestion(ctx context.Context, arg storage.CreateQuestionParams) (storage.Question, error)
-	CreateUser(ctx context.Context, arg storage.CreateUserParams) (storage.User, error)
+	//CreateUser(ctx context.Context, arg storage.CreateUserParams) (storage.User, error)
 	GetAnswer(ctx context.Context, id int32) (storage.Answer, error)
 	GetApp(ctx context.Context, id int32) (storage.App, error)
 	GetPsychologicalPerformance(ctx context.Context, id int32) (storage.PsychologicalPerformance, error)

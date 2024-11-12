@@ -2,6 +2,8 @@ package adminpanelgrpc
 
 import (
 	"context"
+	"github.com/curtrika/UMetrika_server/internal/converter"
+	"github.com/curtrika/UMetrika_server/internal/domain/models"
 	adminpanelv1 "github.com/curtrika/UMetrika_server/pkg/proto/admin_panel/v1"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rs/cors"
@@ -16,9 +18,12 @@ import (
 type serverAPI struct {
 	adminpanelv1.UnimplementedAdminPanelServer
 	adminPanel AdminPanel
+	cvt        converter.GRPCConverter
 }
 
-type AdminPanel interface{}
+type AdminPanel interface {
+	CreateUser(ctx context.Context, user models.User) (*models.User, error)
+}
 
 func Register(gRPCServer *grpc.Server, adminPanel AdminPanel) {
 	adminpanelv1.RegisterAdminPanelServer(gRPCServer, &serverAPI{adminPanel: adminPanel})

@@ -22,7 +22,6 @@ type Provider interface {
 	CreatePsychologicalTest(ctx context.Context, arg storage.CreatePsychologicalTestParams) (storage.PsychologicalTest, error)
 	CreatePsychologicalType(ctx context.Context, title string) (storage.PsychologicalType, error)
 	CreateQuestion(ctx context.Context, arg storage.CreateQuestionParams) (storage.Question, error)
-	CreateUser(ctx context.Context, arg storage.CreateUserParams) (storage.User, error)
 	GetAnswer(ctx context.Context, id int32) (storage.Answer, error)
 	GetApp(ctx context.Context, id int32) (storage.App, error)
 	GetPsychologicalPerformance(ctx context.Context, id int32) (storage.PsychologicalPerformance, error)
@@ -84,13 +83,13 @@ func (a *AdminPanel) CreateAnswer(ctx context.Context, questionID int32, answer 
 }
 
 // CreateUser creates a new user
-func (a *AdminPanel) CreateUser(ctx context.Context, username, email string) error {
-	_, err := a.provider.CreateUser(ctx, storage.CreateUserParams{
-		// Username: username,
-		Email: email,
-	})
-	return err
-}
+//func (a *AdminPanel) CreateUser(ctx context.Context, username, email string) error {
+//	_, err := a.provider.CreateUser(ctx, storage.CreateUserParams{
+//		// Username: username,
+//		Email: email,
+//	})
+//	return err
+//}
 
 // GetApp retrieves an app by its ID
 func (a *AdminPanel) GetApp(ctx context.Context, id int32) (storage.App, error) {
@@ -145,4 +144,9 @@ func (a *AdminPanel) ListUsers(ctx context.Context) ([]storage.User, error) {
 // ListApps lists all apps
 func (a *AdminPanel) ListApps(ctx context.Context) ([]storage.App, error) {
 	return a.provider.ListApps(ctx)
+}
+
+func (a *AdminPanel) CreateUser(ctx context.Context, user models.User) (*models.User, error) {
+	//TODO implement me
+	panic("implement me")
 }

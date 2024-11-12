@@ -4,9 +4,63 @@
 package converter
 
 import (
+	converter "github.com/curtrika/UMetrika_server/internal/converter"
 	models "github.com/curtrika/UMetrika_server/internal/domain/models"
 	schemas "github.com/curtrika/UMetrika_server/internal/storage/schemas"
+	v1 "github.com/curtrika/UMetrika_server/pkg/proto/admin_panel/v1"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+	"time"
 )
+
+type GRPCConverterImpl struct{}
+
+func (c *GRPCConverterImpl) ModelToUser(source *models.User) *v1.User {
+	var pV1User *v1.User
+	if source != nil {
+		var v1User v1.User
+		v1User.Id = converter.UUIDToString((*source).ID)
+		v1User.FirstName = (*source).FirstName
+		v1User.MiddleName = (*source).MiddleName
+		v1User.LastName = (*source).LastName
+		v1User.Email = (*source).Email
+		v1User.RoleTitle = (*source).RoleTitle
+		v1User.SchoolId = converter.UUIDToString((*source).SchoolID)
+		v1User.ClassesId = converter.UUIDToString((*source).ClassesID)
+		v1User.CreatedAt = converter.TimeToTimestamp((*source).CreatedAt)
+		v1User.UpdatedAt = converter.TimeToTimestamp((*source).UpdatedAt)
+		v1User.DeletedAt = converter.TimeToTimestamp((*source).DeletedAt)
+		pV1User = &v1User
+	}
+	return pV1User
+}
+func (c *GRPCConverterImpl) UserToModel(source *v1.User) *models.User {
+	var pModelsUser *models.User
+	if source != nil {
+		var modelsUser models.User
+		modelsUser.ID = converter.StringToUUID((*source).Id)
+		modelsUser.FirstName = (*source).FirstName
+		modelsUser.MiddleName = (*source).MiddleName
+		modelsUser.LastName = (*source).LastName
+		modelsUser.Email = (*source).Email
+		modelsUser.RoleTitle = (*source).RoleTitle
+		modelsUser.SchoolID = converter.StringToUUID((*source).SchoolId)
+		modelsUser.ClassesID = converter.StringToUUID((*source).ClassesId)
+		modelsUser.CreatedAt = c.pTimestamppbTimestampToTimeTime((*source).CreatedAt)
+		modelsUser.UpdatedAt = c.pTimestamppbTimestampToTimeTime((*source).UpdatedAt)
+		modelsUser.DeletedAt = c.pTimestamppbTimestampToTimeTime((*source).DeletedAt)
+		pModelsUser = &modelsUser
+	}
+	return pModelsUser
+}
+func (c *GRPCConverterImpl) pTimestamppbTimestampToTimeTime(source *timestamppb.Timestamp) time.Time {
+	var timeTime time.Time
+	if source != nil {
+		var timeTime2 time.Time
+		_ = (*source)
+		timeTime = timeTime2
+	}
+	return timeTime
+}
 
 type PsqlConverterImpl struct{}
 
@@ -16,4 +70,32 @@ func (c *PsqlConverterImpl) AppToModel(source schemas.AppSchema) models.App {
 	modelsApp.Name = source.Name
 	modelsApp.Secret = source.Secret
 	return modelsApp
+}
+func (c *PsqlConverterImpl) UserToModel(source schemas.UserSchema) models.User {
+	var modelsUser models.User
+	modelsUser.ID = converter.UUIDToUUID(source.ID)
+	modelsUser.FirstName = source.FirstName
+	modelsUser.MiddleName = source.MiddleName
+	modelsUser.LastName = source.LastName
+	modelsUser.Email = source.Email
+	var byteList []uint8
+	if source.PassHash != nil {
+		byteList = make([]uint8, len(source.PassHash))
+		for i := 0; i < len(source.PassHash); i++ {
+			byteList[i] = source.PassHash[i]
+		}
+	}
+	modelsUser.PassHash = byteList
+	modelsUser.RoleTitle = source.RoleTitle
+	modelsUser.SchoolID = converter.UUIDToUUID(source.SchoolID)
+	modelsUser.ClassesID = converter.UUIDToUUID(source.ClassesID)
+	modelsUser.CreatedAt = c.timeTimeToTimeTime(source.CreatedAt)
+	modelsUser.UpdatedAt = c.timeTimeToTimeTime(source.UpdatedAt)
+	modelsUser.DeletedAt = c.timeTimeToTimeTime(source.DeletedAt)
+	return modelsUser
+}
+func (c *PsqlConverterImpl) timeTimeToTimeTime(source time.Time) time.Time {
+	var timeTime time.Time
+	_ = source
+	return timeTime
 }

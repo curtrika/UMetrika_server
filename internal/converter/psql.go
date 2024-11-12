@@ -3,6 +3,7 @@ package converter
 import (
 	"github.com/curtrika/UMetrika_server/internal/domain/models"
 	"github.com/curtrika/UMetrika_server/internal/storage/schemas"
+	"github.com/google/uuid"
 )
 
 // GrpcConverter is an interface for converting between gRPC and service layer representations.
@@ -12,8 +13,15 @@ import (
 // goverter:useZeroValueOnPointerInconsistency
 // goverter:ignoreUnexported
 // goverter:matchIgnoreCase
+// goverter:extend UUIDToUUID
 //
 //go:generate goverter gen ./
 type PsqlConverter interface {
-	AppToModel(request schemas.AppSchema) (response models.App)
+	UserToModel(request storage.UserSchema) (response models.User)
+
+	AppToModel(request storage.AppSchema) (response models.App)
+}
+
+func UUIDToUUID(source uuid.UUID) uuid.UUID {
+	return source
 }
