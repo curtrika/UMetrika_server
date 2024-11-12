@@ -11,7 +11,7 @@ tasks:
     desc: Установить зависимости
     cmds:
       - export GOOSE_DRIVER=postgres
-      - export GOOSE_DBSTRING=postgresql://admin:321@localhost:9876/go_migrations?sslmode=disable
+      - export GOOSE_DBSTRING=postgresql://admin:321@localhost:9876/inside_study?sslmode=disable
 
   gen:
     desc: Сгенерировать gRPC модели
@@ -22,6 +22,7 @@ tasks:
       - protoc -I proto ./proto/admin_panel/v1/*.proto --go_out=./pkg/proto --go_opt=paths=source_relative --go-grpc_out=./pkg/proto --go-grpc_opt=paths=source_relative
       - protoc -I proto ./proto/admin_panel/v1/*.proto --grpc-gateway_out=./pkg/proto --grpc-gateway_opt paths=source_relative --grpc-gateway_opt generate_unbound_methods=true
       - go generate ./...
+      - sqlc generate
 
   build:
     cmds:

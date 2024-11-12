@@ -25,6 +25,7 @@ func Register(gRPCServer *grpc.Server, adminPanel AdminPanel) {
 	adminpanelv1.RegisterAdminPanelServer(gRPCServer, &serverAPI{adminPanel: adminPanel})
 }
 
+// TODO: почему это здесь?
 func RunRest(ctx context.Context) {
 	url := "localhost:44044" // rm hardcode
 	grpcHandler := runtime.NewServeMux()
@@ -38,7 +39,7 @@ func RunRest(ctx context.Context) {
 	mux.Handle("/", grpcHandler)
 	srv := http.Server{Addr: url, Handler: mux}
 
-	log.Printf("server listening at 8081")
+	log.Printf("api gateway listening at 8081")
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -47,7 +48,9 @@ func RunRest(ctx context.Context) {
 	}()
 
 	if err := srv.Shutdown(ctx); err != nil {
+		log.Printf("api gateway stopped")
 		panic(err) // failure/timeout shutting down the server gracefully
+		log.Printf("api gateway gracefully stopped")
 	}
 }
 
