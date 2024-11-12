@@ -2,16 +2,15 @@ package adminpanelgrpc
 
 import (
 	"context"
-	"log"
-	"net/http"
-
 	adminpanelv1 "github.com/curtrika/UMetrika_server/pkg/proto/admin_panel/v1"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/rs/cors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/status"
+	"log"
+	"net/http"
 )
 
 type serverAPI struct {
@@ -26,31 +25,72 @@ func Register(gRPCServer *grpc.Server, adminPanel AdminPanel) {
 }
 
 // TODO: почему это здесь?
+//func RunRest(ctx context.Context) {
+//	url := "localhost:8081" //TODO: rm hardcode
+//	grpcHandler := runtime.NewServeMux()
+//	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+//	err := adminpanelv1.RegisterAdminPanelHandlerFromEndpoint(ctx, grpcHandler, url, opts)
+//	if err != nil {
+//		panic(err)
+//	}
+//	mux := http.NewServeMux()
+//
+//	mux.Handle("/", grpcHandler)
+//
+//	withCors := cors.New(cors.Options{
+//		AllowOriginFunc:  func(origin string) bool { return true },
+//		AllowedMethods:   []string{"GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"},
+//		AllowedHeaders:   []string{"ACCEPT", "Authorization", "Content-Type", "X-CSRF-Token"},
+//		ExposedHeaders:   []string{"Link"},
+//		AllowCredentials: true,
+//		MaxAge:           300,
+//	}).Handler(mux)
+//
+//	srv := http.Server{Addr: url, Handler: withCors}
+//
+//	go func() {
+//		log.Printf("api gateway listening at 8081")
+//
+//		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+//			panic(err)
+//		}
+//	}()
+//
+//	select {
+//	case <-ctx.Done():
+//		if err := srv.Shutdown(ctx); err != nil {
+//			log.Printf("api gateway stopped")
+//			panic(err) // failure/timeout shutting down the server gracefully
+//			log.Printf("api gateway gracefully stopped")
+//		}
+//	}
+//
+//}
+
 func RunRest(ctx context.Context) {
-	url := "localhost:44044" // rm hardcode
-	grpcHandler := runtime.NewServeMux()
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-	err := adminpanelv1.RegisterAdminPanelHandlerFromEndpoint(ctx, grpcHandler, url, opts)
+	err := adminpanelv1.RegisterAdminPanelHandlerFromEndpoint(ctx, mux, "localhost:44044", opts)
 	if err != nil {
 		panic(err)
 	}
-	mux := http.NewServeMux()
 
-	mux.Handle("/", grpcHandler)
-	srv := http.Server{Addr: url, Handler: mux}
+	log.Printf("server listening at 8081")
 
-	log.Printf("api gateway listening at 8081")
+	withCors := cors.New(cors.Options{
+		AllowOriginFunc:  func(origin string) bool { return true },
+		AllowedMethods:   []string{"GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"ACCEPT", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}).Handler(mux)
 
-	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			panic(err)
-		}
-	}()
-
-	if err := srv.Shutdown(ctx); err != nil {
-		log.Printf("api gateway stopped")
-		panic(err) // failure/timeout shutting down the server gracefully
-		log.Printf("api gateway gracefully stopped")
+	if err := http.ListenAndServe(":8081", withCors); err != nil {
+		panic(err)
 	}
 }
 

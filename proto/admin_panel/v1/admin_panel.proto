@@ -14,11 +14,19 @@ service AdminPanel {
     };
   }
 
-  rpc CreateDiscipline (CreateDisciplineRequest) returns (CreateDisciplineResponse);
+  rpc CreateDiscipline (CreateDisciplineRequest) returns (CreateDisciplineResponse) {
+    option (google.api.http) = {
+      post: "/discipline"
+    };
+  }
 
   // PsychologicalType RPCs
   rpc CreatePsychologicalType (CreatePsychologicalTypeRequest) returns (PsychologicalTypeResponse);
-  rpc GetPsychologicalType (GetPsychologicalTypeRequest) returns (PsychologicalTypeResponse);
+  rpc GetPsychologicalType (GetPsychologicalTypeRequest) returns (PsychologicalTypeResponse) {
+    option (google.api.http) = {
+      get: "/psychological_type/{id}"
+    };
+  }
   rpc ListPsychologicalTypes (ListPsychologicalTypesRequest) returns (ListPsychologicalTypesResponse);
 
   // PsychologicalTest RPCs

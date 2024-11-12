@@ -67,11 +67,18 @@ func local_request_AdminPanel_Ping_0(ctx context.Context, marshaler runtime.Mars
 
 }
 
+var (
+	filter_AdminPanel_CreateDiscipline_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
 func request_AdminPanel_CreateDiscipline_0(ctx context.Context, marshaler runtime.Marshaler, client AdminPanelClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq CreateDisciplineRequest
 	var metadata runtime.ServerMetadata
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_AdminPanel_CreateDiscipline_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -84,7 +91,10 @@ func local_request_AdminPanel_CreateDiscipline_0(ctx context.Context, marshaler 
 	var protoReq CreateDisciplineRequest
 	var metadata runtime.ServerMetadata
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_AdminPanel_CreateDiscipline_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -123,8 +133,21 @@ func request_AdminPanel_GetPsychologicalType_0(ctx context.Context, marshaler ru
 	var protoReq GetPsychologicalTypeRequest
 	var metadata runtime.ServerMetadata
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+
+	protoReq.Id, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := client.GetPsychologicalType(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -136,8 +159,21 @@ func local_request_AdminPanel_GetPsychologicalType_0(ctx context.Context, marsha
 	var protoReq GetPsychologicalTypeRequest
 	var metadata runtime.ServerMetadata
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+
+	protoReq.Id, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := server.GetPsychologicalType(ctx, &protoReq)
@@ -523,7 +559,7 @@ func RegisterAdminPanelHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/admin_panel.AdminPanel/CreateDiscipline", runtime.WithHTTPPathPattern("/admin_panel.AdminPanel/CreateDiscipline"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/admin_panel.AdminPanel/CreateDiscipline", runtime.WithHTTPPathPattern("/discipline"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -565,7 +601,7 @@ func RegisterAdminPanelHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 
 	})
 
-	mux.Handle("POST", pattern_AdminPanel_GetPsychologicalType_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_AdminPanel_GetPsychologicalType_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -573,7 +609,7 @@ func RegisterAdminPanelHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/admin_panel.AdminPanel/GetPsychologicalType", runtime.WithHTTPPathPattern("/admin_panel.AdminPanel/GetPsychologicalType"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/admin_panel.AdminPanel/GetPsychologicalType", runtime.WithHTTPPathPattern("/psychological_type/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -984,7 +1020,7 @@ func RegisterAdminPanelHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/admin_panel.AdminPanel/CreateDiscipline", runtime.WithHTTPPathPattern("/admin_panel.AdminPanel/CreateDiscipline"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/admin_panel.AdminPanel/CreateDiscipline", runtime.WithHTTPPathPattern("/discipline"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1022,13 +1058,13 @@ func RegisterAdminPanelHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 
 	})
 
-	mux.Handle("POST", pattern_AdminPanel_GetPsychologicalType_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_AdminPanel_GetPsychologicalType_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/admin_panel.AdminPanel/GetPsychologicalType", runtime.WithHTTPPathPattern("/admin_panel.AdminPanel/GetPsychologicalType"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/admin_panel.AdminPanel/GetPsychologicalType", runtime.WithHTTPPathPattern("/psychological_type/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1336,11 +1372,11 @@ func RegisterAdminPanelHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 var (
 	pattern_AdminPanel_Ping_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"ping"}, ""))
 
-	pattern_AdminPanel_CreateDiscipline_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"admin_panel.AdminPanel", "CreateDiscipline"}, ""))
+	pattern_AdminPanel_CreateDiscipline_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"discipline"}, ""))
 
 	pattern_AdminPanel_CreatePsychologicalType_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"admin_panel.AdminPanel", "CreatePsychologicalType"}, ""))
 
-	pattern_AdminPanel_GetPsychologicalType_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"admin_panel.AdminPanel", "GetPsychologicalType"}, ""))
+	pattern_AdminPanel_GetPsychologicalType_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"psychological_type", "id"}, ""))
 
 	pattern_AdminPanel_ListPsychologicalTypes_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"admin_panel.AdminPanel", "ListPsychologicalTypes"}, ""))
 
