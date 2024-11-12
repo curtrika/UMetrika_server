@@ -155,7 +155,7 @@ func (q *Queries) CreateQuestion(ctx context.Context, arg CreateQuestionParams) 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (email, pass_hash)
 VALUES ($1, $2)
-RETURNING id, email, pass_hash
+RETURNING id, first_name, middle_name, last_name, email, pass_hash, gender, created_at, updated_at, deleted_at, role_id, school_id, classes_id
 `
 
 type CreateUserParams struct {
@@ -167,7 +167,21 @@ type CreateUserParams struct {
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
 	row := q.db.QueryRow(ctx, createUser, arg.Email, arg.PassHash)
 	var i User
-	err := row.Scan(&i.ID, &i.Email, &i.PassHash)
+	err := row.Scan(
+		&i.ID,
+		&i.FirstName,
+		&i.MiddleName,
+		&i.LastName,
+		&i.Email,
+		&i.PassHash,
+		&i.Gender,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.RoleID,
+		&i.SchoolID,
+		&i.ClassesID,
+	)
 	return i, err
 }
 
@@ -273,7 +287,7 @@ func (q *Queries) GetQuestion(ctx context.Context, id int32) (Question, error) {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, email, pass_hash
+SELECT id, first_name, middle_name, last_name, email, pass_hash, gender, created_at, updated_at, deleted_at, role_id, school_id, classes_id
 FROM users
 WHERE id = $1
 `
@@ -282,7 +296,21 @@ WHERE id = $1
 func (q *Queries) GetUser(ctx context.Context, id pgtype.UUID) (User, error) {
 	row := q.db.QueryRow(ctx, getUser, id)
 	var i User
-	err := row.Scan(&i.ID, &i.Email, &i.PassHash)
+	err := row.Scan(
+		&i.ID,
+		&i.FirstName,
+		&i.MiddleName,
+		&i.LastName,
+		&i.Email,
+		&i.PassHash,
+		&i.Gender,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.RoleID,
+		&i.SchoolID,
+		&i.ClassesID,
+	)
 	return i, err
 }
 
@@ -460,7 +488,7 @@ func (q *Queries) ListQuestions(ctx context.Context) ([]Question, error) {
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, email, pass_hash
+SELECT id, first_name, middle_name, last_name, email, pass_hash, gender, created_at, updated_at, deleted_at, role_id, school_id, classes_id
 FROM users
 `
 
@@ -474,7 +502,21 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 	var items []User
 	for rows.Next() {
 		var i User
-		if err := rows.Scan(&i.ID, &i.Email, &i.PassHash); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.FirstName,
+			&i.MiddleName,
+			&i.LastName,
+			&i.Email,
+			&i.PassHash,
+			&i.Gender,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+			&i.RoleID,
+			&i.SchoolID,
+			&i.ClassesID,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

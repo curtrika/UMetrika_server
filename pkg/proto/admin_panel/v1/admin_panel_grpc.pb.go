@@ -36,6 +36,8 @@ const (
 	AdminPanel_CreatePsychologicalPerformance_FullMethodName = "/admin_panel.AdminPanel/CreatePsychologicalPerformance"
 	AdminPanel_GetPsychologicalPerformance_FullMethodName    = "/admin_panel.AdminPanel/GetPsychologicalPerformance"
 	AdminPanel_ListPsychologicalPerformances_FullMethodName  = "/admin_panel.AdminPanel/ListPsychologicalPerformances"
+	AdminPanel_CreateUser_FullMethodName                     = "/admin_panel.AdminPanel/CreateUser"
+	AdminPanel_GetUser_FullMethodName                        = "/admin_panel.AdminPanel/GetUser"
 )
 
 // AdminPanelClient is the client API for AdminPanel service.
@@ -68,6 +70,9 @@ type AdminPanelClient interface {
 	CreatePsychologicalPerformance(ctx context.Context, in *CreatePsychologicalPerformanceRequest, opts ...grpc.CallOption) (*PsychologicalPerformanceResponse, error)
 	GetPsychologicalPerformance(ctx context.Context, in *GetPsychologicalPerformanceRequest, opts ...grpc.CallOption) (*PsychologicalPerformanceResponse, error)
 	ListPsychologicalPerformances(ctx context.Context, in *ListPsychologicalPerformancesRequest, opts ...grpc.CallOption) (*ListPsychologicalPerformancesResponse, error)
+	// User RPCs
+	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
+	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 }
 
 type adminPanelClient struct {
@@ -248,6 +253,26 @@ func (c *adminPanelClient) ListPsychologicalPerformances(ctx context.Context, in
 	return out, nil
 }
 
+func (c *adminPanelClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateUserResponse)
+	err := c.cc.Invoke(ctx, AdminPanel_CreateUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminPanelClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserResponse)
+	err := c.cc.Invoke(ctx, AdminPanel_GetUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminPanelServer is the server API for AdminPanel service.
 // All implementations must embed UnimplementedAdminPanelServer
 // for forward compatibility.
@@ -278,6 +303,9 @@ type AdminPanelServer interface {
 	CreatePsychologicalPerformance(context.Context, *CreatePsychologicalPerformanceRequest) (*PsychologicalPerformanceResponse, error)
 	GetPsychologicalPerformance(context.Context, *GetPsychologicalPerformanceRequest) (*PsychologicalPerformanceResponse, error)
 	ListPsychologicalPerformances(context.Context, *ListPsychologicalPerformancesRequest) (*ListPsychologicalPerformancesResponse, error)
+	// User RPCs
+	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
+	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	mustEmbedUnimplementedAdminPanelServer()
 }
 
@@ -338,6 +366,12 @@ func (UnimplementedAdminPanelServer) GetPsychologicalPerformance(context.Context
 }
 func (UnimplementedAdminPanelServer) ListPsychologicalPerformances(context.Context, *ListPsychologicalPerformancesRequest) (*ListPsychologicalPerformancesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPsychologicalPerformances not implemented")
+}
+func (UnimplementedAdminPanelServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+}
+func (UnimplementedAdminPanelServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
 func (UnimplementedAdminPanelServer) mustEmbedUnimplementedAdminPanelServer() {}
 func (UnimplementedAdminPanelServer) testEmbeddedByValue()                    {}
@@ -666,6 +700,42 @@ func _AdminPanel_ListPsychologicalPerformances_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AdminPanel_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminPanelServer).CreateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminPanel_CreateUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminPanelServer).CreateUser(ctx, req.(*CreateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdminPanel_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminPanelServer).GetUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdminPanel_GetUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminPanelServer).GetUser(ctx, req.(*GetUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AdminPanel_ServiceDesc is the grpc.ServiceDesc for AdminPanel service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -740,6 +810,14 @@ var AdminPanel_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListPsychologicalPerformances",
 			Handler:    _AdminPanel_ListPsychologicalPerformances_Handler,
+		},
+		{
+			MethodName: "CreateUser",
+			Handler:    _AdminPanel_CreateUser_Handler,
+		},
+		{
+			MethodName: "GetUser",
+			Handler:    _AdminPanel_GetUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

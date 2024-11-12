@@ -20,6 +20,28 @@ type App struct {
 	Secret string
 }
 
+type Cause struct {
+	ID        pgtype.UUID
+	Title     string
+	ProblemID pgtype.UUID
+}
+
+type Class struct {
+	ID            pgtype.UUID
+	Grade         int32
+	Title         pgtype.Text
+	MainTeacherID pgtype.UUID
+	ReleaseDate   pgtype.Timestamp
+	CreatedAt     pgtype.Timestamp
+	UpdatedAt     pgtype.Timestamp
+	DeletedAt     pgtype.Timestamp
+}
+
+type Problem struct {
+	ID    pgtype.UUID
+	Title string
+}
+
 type PsychologicalPerformance struct {
 	ID                  int32
 	OwnerID             int32
@@ -48,8 +70,37 @@ type Question struct {
 	Title          string
 }
 
+type Role struct {
+	ID    int32
+	Title string
+}
+
+type School struct {
+	ID        pgtype.UUID
+	LargeName string
+	CreatedAt pgtype.Timestamp
+	UpdatedAt pgtype.Timestamp
+	DeletedAt pgtype.Timestamp
+}
+
+type Solution struct {
+	ID        pgtype.UUID
+	Title     string
+	ProblemID pgtype.UUID
+}
+
 type User struct {
-	ID       pgtype.UUID
-	Email    string
-	PassHash []byte
+	ID         pgtype.UUID
+	FirstName  string
+	MiddleName string
+	LastName   string
+	Email      string
+	PassHash   []byte
+	Gender     pgtype.Bool
+	CreatedAt  pgtype.Timestamp
+	UpdatedAt  pgtype.Timestamp
+	DeletedAt  pgtype.Timestamp
+	RoleID     pgtype.Int4
+	SchoolID   pgtype.UUID
+	ClassesID  pgtype.UUID
 }

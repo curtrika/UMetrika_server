@@ -5,6 +5,7 @@ package admin_panel;
 option go_package = "github.com/curtrika/UMetrika_server/pkg/proto/admin_panel/v1;v1";
 
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
 
 // AdminPanel is a service for managing school info, users, and psychological tests.
 service AdminPanel {
@@ -110,6 +111,20 @@ service AdminPanel {
   rpc ListPsychologicalPerformances (ListPsychologicalPerformancesRequest) returns (ListPsychologicalPerformancesResponse) {
     option (google.api.http) = {
       get: "/psychological-performances"
+    };
+  }
+
+  // User RPCs
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post: "/admin/user"
+      body: "*"
+    };
+  }
+
+  rpc GetUser (GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      get: "/admin/user/{user_id}"
     };
   }
 }
@@ -283,4 +298,40 @@ message ListPsychologicalPerformancesRequest {}
 message ListPsychologicalPerformancesResponse {
   repeated PsychologicalPerformance psychological_performances = 1;
   repeated Error errors = 2;
+}
+
+message CreateUserRequest {
+  User user = 10;
+}
+
+message CreateUserResponse {
+  repeated Error errors = 1;
+  User new_user = 10;
+}
+
+message GetUserRequest {
+  string user_id = 10;
+}
+
+message GetUserResponse {
+  repeated Error errors = 1;
+  User user = 10;
+}
+
+// TODO: вынести отсюда
+// MODELS
+message User {
+  string id = 1;
+  string first_name = 2;
+  string middle_name = 3;
+  string last_name = 4;
+  string email = 5;
+  string password = 6;
+  string pass_hash = 7; //TODO: говертер почему то ругается
+  string role_title = 8;
+  string school_id = 9;
+  string classes_id = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+  google.protobuf.Timestamp deleted_at= 13;
 }
