@@ -8,46 +8,110 @@ import "google/api/annotations.proto";
 
 // AdminPanel is a service for managing school info, users, and psychological tests.
 service AdminPanel {
+  // Ping RPC
   rpc Ping (PingMessage) returns (PingMessage) {
     option (google.api.http) = {
       get: "/ping"
     };
   }
 
+  // CreateDiscipline RPC
   rpc CreateDiscipline (CreateDisciplineRequest) returns (CreateDisciplineResponse) {
-    option (google.api.http) = {
-      post: "/discipline"
-    };
-  }
+  option (google.api.http) = {
+    post: "/discipline"
+    body: "*"
+  };
+}
 
   // PsychologicalType RPCs
-  rpc CreatePsychologicalType (CreatePsychologicalTypeRequest) returns (PsychologicalTypeResponse);
-  rpc GetPsychologicalType (GetPsychologicalTypeRequest) returns (PsychologicalTypeResponse) {
+  rpc CreatePsychologicalType (CreatePsychologicalTypeRequest) returns (PsychologicalTypeResponse) {
     option (google.api.http) = {
-      get: "/psychological_type/{id}"
+      post: "/psychological-types"
+      body: "*"
     };
   }
-  rpc ListPsychologicalTypes (ListPsychologicalTypesRequest) returns (ListPsychologicalTypesResponse);
+  rpc GetPsychologicalType (GetPsychologicalTypeRequest) returns (PsychologicalTypeResponse) {
+    option (google.api.http) = {
+      get: "/psychological-types/{id}"
+    };
+  }
+  rpc ListPsychologicalTypes (ListPsychologicalTypesRequest) returns (ListPsychologicalTypesResponse) {
+    option (google.api.http) = {
+      get: "/psychological-types"
+    };
+  }
 
   // PsychologicalTest RPCs
-  rpc CreatePsychologicalTest (CreatePsychologicalTestRequest) returns (PsychologicalTestResponse);
-  rpc GetPsychologicalTest (GetPsychologicalTestRequest) returns (PsychologicalTestResponse);
-  rpc ListPsychologicalTests (ListPsychologicalTestsRequest) returns (ListPsychologicalTestsResponse);
+  rpc CreatePsychologicalTest (CreatePsychologicalTestRequest) returns (PsychologicalTestResponse) {
+    option (google.api.http) = {
+      post: "/psychological-tests"
+      body: "*"
+    };
+  }
+  rpc GetPsychologicalTest (GetPsychologicalTestRequest) returns (PsychologicalTestResponse) {
+    option (google.api.http) = {
+      get: "/psychological-tests/{id}"
+    };
+  }
+  rpc ListPsychologicalTests (ListPsychologicalTestsRequest) returns (ListPsychologicalTestsResponse) {
+    option (google.api.http) = {
+      get: "/psychological-tests"
+    };
+  }
 
   // Question RPCs
-  rpc CreateQuestion (CreateQuestionRequest) returns (QuestionResponse);
-  rpc GetQuestion (GetQuestionRequest) returns (QuestionResponse);
-  rpc ListQuestions (ListQuestionsRequest) returns (ListQuestionsResponse);
+  rpc CreateQuestion (CreateQuestionRequest) returns (QuestionResponse) {
+    option (google.api.http) = {
+      post: "/questions"
+      body: "*"
+    };
+  }
+  rpc GetQuestion (GetQuestionRequest) returns (QuestionResponse) {
+    option (google.api.http) = {
+      get: "/questions/{id}"
+    };
+  }
+  rpc ListQuestions (ListQuestionsRequest) returns (ListQuestionsResponse) {
+    option (google.api.http) = {
+      get: "/questions"
+    };
+  }
 
   // Answer RPCs
-  rpc CreateAnswer (CreateAnswerRequest) returns (AnswerResponse);
-  rpc GetAnswer (GetAnswerRequest) returns (AnswerResponse);
-  rpc ListAnswers (ListAnswersRequest) returns (ListAnswersResponse);
+  rpc CreateAnswer (CreateAnswerRequest) returns (AnswerResponse) {
+    option (google.api.http) = {
+      post: "/answers"
+      body: "*"
+    };
+  }
+  rpc GetAnswer (GetAnswerRequest) returns (AnswerResponse) {
+    option (google.api.http) = {
+      get: "/answers/{id}"
+    };
+  }
+  rpc ListAnswers (ListAnswersRequest) returns (ListAnswersResponse) {
+    option (google.api.http) = {
+      get: "/answers"
+    };
+  }
 
   // PsychologicalPerformance RPCs
-  rpc CreatePsychologicalPerformance (CreatePsychologicalPerformanceRequest) returns (PsychologicalPerformanceResponse);
-  rpc GetPsychologicalPerformance (GetPsychologicalPerformanceRequest) returns (PsychologicalPerformanceResponse);
-  rpc ListPsychologicalPerformances (ListPsychologicalPerformancesRequest) returns (ListPsychologicalPerformancesResponse);
+  rpc CreatePsychologicalPerformance (CreatePsychologicalPerformanceRequest) returns (PsychologicalPerformanceResponse) {
+    option (google.api.http) = {
+      post: "/psychological-performances"
+      body: "*"
+    };
+  }
+  rpc GetPsychologicalPerformance (GetPsychologicalPerformanceRequest) returns (PsychologicalPerformanceResponse) {
+    option (google.api.http) = {
+      get: "/psychological-performances/{id}"
+    };
+  }
+  rpc ListPsychologicalPerformances (ListPsychologicalPerformancesRequest) returns (ListPsychologicalPerformancesResponse) {
+    option (google.api.http) = {
+      get: "/psychological-performances"
+    };
+  }
 }
 
 message PingMessage {

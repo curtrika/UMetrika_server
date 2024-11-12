@@ -44,7 +44,9 @@ const (
 //
 // AdminPanel is a service for managing school info, users, and psychological tests.
 type AdminPanelClient interface {
+	// Ping RPC
 	Ping(ctx context.Context, in *PingMessage, opts ...grpc.CallOption) (*PingMessage, error)
+	// CreateDiscipline RPC
 	CreateDiscipline(ctx context.Context, in *CreateDisciplineRequest, opts ...grpc.CallOption) (*CreateDisciplineResponse, error)
 	// PsychologicalType RPCs
 	CreatePsychologicalType(ctx context.Context, in *CreatePsychologicalTypeRequest, opts ...grpc.CallOption) (*PsychologicalTypeResponse, error)
@@ -252,7 +254,9 @@ func (c *adminPanelClient) ListPsychologicalPerformances(ctx context.Context, in
 //
 // AdminPanel is a service for managing school info, users, and psychological tests.
 type AdminPanelServer interface {
+	// Ping RPC
 	Ping(context.Context, *PingMessage) (*PingMessage, error)
+	// CreateDiscipline RPC
 	CreateDiscipline(context.Context, *CreateDisciplineRequest) (*CreateDisciplineResponse, error)
 	// PsychologicalType RPCs
 	CreatePsychologicalType(context.Context, *CreatePsychologicalTypeRequest) (*PsychologicalTypeResponse, error)
