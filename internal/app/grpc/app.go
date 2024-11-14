@@ -8,6 +8,7 @@ import (
 
 	adminpanelgrpc "github.com/curtrika/UMetrika_server/internal/grpc/admin_panel"
 	authgrpc "github.com/curtrika/UMetrika_server/internal/grpc/auth"
+	umetrikagrpc "github.com/curtrika/UMetrika_server/internal/grpc/umetrika"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"google.golang.org/grpc"
@@ -63,6 +64,7 @@ func New(
 	log *slog.Logger,
 	authService authgrpc.Auth,
 	adminPanelService adminpanelgrpc.AdminPanel,
+	umetrikaService umetrikagrpc.UMetrika,
 	port int,
 ) *App {
 	loggingOpts := []logging.Option{ // позволяет логировать запросы/ответы сервера
@@ -91,6 +93,9 @@ func New(
 	// admin panel
 	adminpanelgrpc.Register(gRPCServer, adminPanelService)
 	go adminpanelgrpc.RunRest(ctx)
+
+	umetrikagrpc.Register(gRPCServer, umetrikaService)
+	go umetrikagrpc.RunRest(ctx)
 
 	return &App{
 		log:        log,

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package umetrika;
+
+option go_package = "github.com/curtrika/UMetrika_server/pkg/proto/umetrika/v1;v1";
+
+import "google/api/annotations.proto";
+
+service UMetrika {
+  // Ping RPC
+  rpc Ping(EmptyMessage) returns (PingMessage) {
+    option (google.api.http) = {
+      get: "/umetrika/ping"
+    };
+  }
+}
+
+message PingMessage {
+  string message = 1;
+}
+
+message EmptyMessage {}

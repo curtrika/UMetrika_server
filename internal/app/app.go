@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"github.com/curtrika/UMetrika_server/internal/services/umetrika"
 	"log/slog"
 	"time"
 
@@ -59,7 +60,9 @@ func Init(
 
 	adminPanelService := admin_panel.New(log, repo)
 
-	grpcApp := grpcapp.New(ctx, log, authService, adminPanelService, grpcPort)
+	umetrikaService := umetrika.New(log, repo)
+
+	grpcApp := grpcapp.New(ctx, log, authService, adminPanelService, umetrikaService, grpcPort)
 
 	return &App{
 		GRPCServer: grpcApp,
