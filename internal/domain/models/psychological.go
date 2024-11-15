@@ -3,8 +3,16 @@ package models
 import "time"
 
 type PsychologicalPerformance struct {
-	ID                  int32     `json:"id"`
-	OwnerID             int32     `json:"owner_id"`
-	PsychologicalTestID int       `json:"psychological_test_id"`
-	StartedAt           time.Time `json:"started_at"`
+	ID                  int32
+	OwnerID             int32
+	PsychologicalTestID int
+	StartedAt           time.Time
+}
+
+type PsychologicalTest struct {
+	ID              int32
+	FirstQuestionID int
+	TypeID          int
+	OwnerID         int32
+	Title           string
 }

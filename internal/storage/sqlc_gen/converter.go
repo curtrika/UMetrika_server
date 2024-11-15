@@ -13,8 +13,14 @@ import (
 // goverter:extend TimestamptzToTime
 // goverter:extend TimeToTimestamptz
 type Converter interface {
-	DBToModel(dbModel *PsychologicalPerformance) (*models.PsychologicalPerformance, error)
-	ModelToDB(model *models.PsychologicalPerformance) (*PsychologicalPerformance, error)
+	PsychologicalPerfomanceDBToModel(dbModel *PsychologicalPerformance) *models.PsychologicalPerformance
+	PsychologicalPerfomanceModelToDB(model *models.PsychologicalPerformance) *PsychologicalPerformance
+
+	PsychologicalTestDBToModel(dbModel *PsychologicalTest) *models.PsychologicalTest
+	PsychologicalTestModelToDB(model *models.PsychologicalTest) *PsychologicalTest
+
+	PsychologicalTestsDBToModel(dbModel []PsychologicalTest) []models.PsychologicalTest
+	PsychologicalTestsModelToDB(model []models.PsychologicalTest) []PsychologicalTest
 }
 
 func Int4ToInt(val pgtype.Int4) int {
