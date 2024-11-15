@@ -5,7 +5,6 @@ import (
 	"log/slog"
 
 	"github.com/curtrika/UMetrika_server/internal/domain/models"
-	storage "github.com/curtrika/UMetrika_server/internal/storage/sqlc_gen"
 )
 
 /*
@@ -23,21 +22,20 @@ TODO
 type TestService struct {
 	log           *slog.Logger
 	testsProvider testProvider
-	converter     storage.Converter
 }
 
 type testProvider interface {
-	GetTestsByOwnerId(ownerId int) ([]storage.PsychologicalTest, error)
+	GetTestsByOwnerId(ownerId int) ([]models.PsychologicalTest, error)
 }
 
-func NewTestService(tp testProvider, converter storage.Converter) TestService {
+func NewTestService(tp testProvider) TestService {
 	return TestService{testsProvider: tp}
 }
 
 func (t *TestService) GetTestsByOwnerId(ownerId int) ([]models.PsychologicalTest, error) {
-	dbTests, err := t.testsProvider.GetTestsByOwnerId(ownerId)
+	tests, err := t.testsProvider.GetTestsByOwnerId(ownerId)
 	if err != nil {
 		return nil, fmt.Errorf("could not get tests by owner id: %w", err)
 	}
-	return t.converter.PsychologicalTestsDBToModel(dbTests), nil
+	return tests, nil
 }

@@ -16,3 +16,9 @@ type PsychologicalTest struct {
 	OwnerID         int32
 	Title           string
 }
+
+type Answer struct {
+	ID           int32
+	NextAnswerID int
+	Title        string
+}
