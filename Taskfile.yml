@@ -16,7 +16,7 @@ tasks:
   goverter:
     desc: сгенерировать goverter конверторы (рекурсивно с корневой директории)
     cmds:
-      - goverter gen ./...
+      - goverter gen ./internal/...
 
   gen:
     desc: Сгенерировать gRPC модели

@@ -5,18 +5,40 @@ package umetrika;
 option go_package = "github.com/curtrika/UMetrika_server/pkg/proto/umetrika/v1;v1";
 
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
 
 service UMetrika {
   // Ping RPC
   rpc Ping(EmptyMessage) returns (PingMessage) {
     option (google.api.http) = {
-      get: "/umetrika/ping"
+      get: "/api/v1/umetrika/ping"
+    };
+  }
+
+  rpc CreateOwner(OwnerPost) returns (OwnerResult) {
+    option (google.api.http) = {
+      post: "/api/v1/umetrika/owner"
+		  body: "*"
     };
   }
 }
 
 message PingMessage {
   string message = 1;
+}
+
+message OwnerPost {
+	string ownerName = 1;
+	string password = 2;
+	string email = 3;
+}
+
+message OwnerResult {
+  string ownerID = 1;
+	string ownerName = 2;
+	string email = 3;
+	google.protobuf.Timestamp created_at = 4;
 }
 
 message EmptyMessage {}

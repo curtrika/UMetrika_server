@@ -11,78 +11,71 @@ import (
 
 type ConverterImpl struct{}
 
-func (c *ConverterImpl) AnswerDBToModel(source sqlc.Answer) models.Answer {
-	var modelsAnswer models.Answer
-	modelsAnswer.ID = source.ID
-	modelsAnswer.NextAnswerID = postgres.Int4ToInt(source.NextAnswerID)
-	modelsAnswer.Title = source.Title
-	return modelsAnswer
-}
-
-func (c *ConverterImpl) AnswerModelToDB(source models.Answer) sqlc.Answer {
-	var postgresAnswer sqlc.Answer
-	postgresAnswer.ID = source.ID
-	postgresAnswer.NextAnswerID = postgres.IntToInt4(source.NextAnswerID)
-	postgresAnswer.Title = source.Title
-	return postgresAnswer
-}
-
-func (c *ConverterImpl) PsychologicalPerfomanceDBToModel(source sqlc.PsychologicalPerformance) models.PsychologicalPerformance {
-	var modelsPsychologicalPerformance models.PsychologicalPerformance
-	modelsPsychologicalPerformance.ID = source.ID
-	modelsPsychologicalPerformance.OwnerID = source.OwnerID
-	modelsPsychologicalPerformance.PsychologicalTestID = postgres.Int4ToInt(source.PsychologicalTestID)
-	modelsPsychologicalPerformance.StartedAt = postgres.TimestamptzToTime(source.StartedAt)
-	return modelsPsychologicalPerformance
-}
-
-func (c *ConverterImpl) PsychologicalPerfomanceModelToDB(source models.PsychologicalPerformance) sqlc.PsychologicalPerformance {
-	var postgresPsychologicalPerformance sqlc.PsychologicalPerformance
-	postgresPsychologicalPerformance.ID = source.ID
-	postgresPsychologicalPerformance.OwnerID = source.OwnerID
-	postgresPsychologicalPerformance.PsychologicalTestID = postgres.IntToInt4(source.PsychologicalTestID)
-	postgresPsychologicalPerformance.StartedAt = postgres.TimeToTimestamptz(source.StartedAt)
-	return postgresPsychologicalPerformance
-}
-
-func (c *ConverterImpl) PsychologicalTestDBToModel(source sqlc.PsychologicalTest) models.PsychologicalTest {
-	var modelsPsychologicalTest models.PsychologicalTest
-	modelsPsychologicalTest.ID = source.ID
-	modelsPsychologicalTest.FirstQuestionID = postgres.Int4ToInt(source.FirstQuestionID)
-	modelsPsychologicalTest.TypeID = postgres.Int4ToInt(source.TypeID)
-	modelsPsychologicalTest.OwnerID = source.OwnerID
-	modelsPsychologicalTest.Title = source.Title
-	return modelsPsychologicalTest
-}
-
-func (c *ConverterImpl) PsychologicalTestModelToDB(source models.PsychologicalTest) sqlc.PsychologicalTest {
-	var postgresPsychologicalTest sqlc.PsychologicalTest
-	postgresPsychologicalTest.ID = source.ID
-	postgresPsychologicalTest.FirstQuestionID = postgres.IntToInt4(source.FirstQuestionID)
-	postgresPsychologicalTest.TypeID = postgres.IntToInt4(source.TypeID)
-	postgresPsychologicalTest.OwnerID = source.OwnerID
-	postgresPsychologicalTest.Title = source.Title
-	return postgresPsychologicalTest
-}
-
-func (c *ConverterImpl) PsychologicalTestsDBToModel(source []sqlc.PsychologicalTest) []models.PsychologicalTest {
-	var modelsPsychologicalTestList []models.PsychologicalTest
-	if source != nil {
-		modelsPsychologicalTestList = make([]models.PsychologicalTest, len(source))
-		for i := 0; i < len(source); i++ {
-			modelsPsychologicalTestList[i] = c.PsychologicalTestDBToModel(source[i])
+func (c *ConverterImpl) OwnerDBToModel(source sqlc.EducationOwner) models.EducationOwner {
+	var modelsEducationOwner models.EducationOwner
+	modelsEducationOwner.OwnerID = postgres.UUIDPostgresToGoogle(source.OwnerID)
+	modelsEducationOwner.OwnerName = source.OwnerName
+	if source.PassHash != nil {
+		modelsEducationOwner.PassHash = make([]uint8, len(source.PassHash))
+		for i := 0; i < len(source.PassHash); i++ {
+			modelsEducationOwner.PassHash[i] = source.PassHash[i]
 		}
 	}
-	return modelsPsychologicalTestList
+	modelsEducationOwner.Email = source.Email
+	modelsEducationOwner.CreatedAt = postgres.TimestampToTime(source.CreatedAt)
+	return modelsEducationOwner
 }
-
-func (c *ConverterImpl) PsychologicalTestsModelToDB(source []models.PsychologicalTest) []sqlc.PsychologicalTest {
-	var postgresPsychologicalTestList []sqlc.PsychologicalTest
-	if source != nil {
-		postgresPsychologicalTestList = make([]sqlc.PsychologicalTest, len(source))
-		for i := 0; i < len(source); i++ {
-			postgresPsychologicalTestList[i] = c.PsychologicalTestModelToDB(source[i])
+func (c *ConverterImpl) OwnerModelToDb(source models.EducationOwner) sqlc.EducationOwner {
+	var postgresEducationOwner sqlc.EducationOwner
+	postgresEducationOwner.OwnerID = postgres.UUIDGoogleToPostgres(source.OwnerID)
+	postgresEducationOwner.OwnerName = source.OwnerName
+	if source.PassHash != nil {
+		postgresEducationOwner.PassHash = make([]uint8, len(source.PassHash))
+		for i := 0; i < len(source.PassHash); i++ {
+			postgresEducationOwner.PassHash[i] = source.PassHash[i]
 		}
 	}
-	return postgresPsychologicalTestList
+	postgresEducationOwner.Email = source.Email
+	postgresEducationOwner.CreatedAt = postgres.TimeToTimestamp(source.CreatedAt)
+	return postgresEducationOwner
+}
+func (c *ConverterImpl) TestDBToModel(source sqlc.EducationTest) models.EducationTest {
+	var modelsEducationTest models.EducationTest
+	modelsEducationTest.TestID = postgres.UUIDPostgresToGoogle(source.TestID)
+	modelsEducationTest.OwnerID = postgres.UUIDPostgresToGoogle(source.OwnerID)
+	modelsEducationTest.TestName = source.TestName
+	modelsEducationTest.Description = postgres.PostgresTextToString(source.Description)
+	modelsEducationTest.TestType = string(source.TestType)
+	modelsEducationTest.CreatedAt = postgres.TimestampToTime(source.CreatedAt)
+	return modelsEducationTest
+}
+func (c *ConverterImpl) TestModelToDB(source models.EducationTest) sqlc.EducationTest {
+	var postgresEducationTest sqlc.EducationTest
+	postgresEducationTest.TestID = postgres.UUIDGoogleToPostgres(source.TestID)
+	postgresEducationTest.OwnerID = postgres.UUIDGoogleToPostgres(source.OwnerID)
+	postgresEducationTest.TestName = source.TestName
+	postgresEducationTest.Description = postgres.StringToPostgresText(source.Description)
+	postgresEducationTest.TestType = sqlc.TestType(source.TestType)
+	postgresEducationTest.CreatedAt = postgres.TimeToTimestamp(source.CreatedAt)
+	return postgresEducationTest
+}
+func (c *ConverterImpl) TestsDBToModel(source []sqlc.EducationTest) []models.EducationTest {
+	var modelsEducationTestList []models.EducationTest
+	if source != nil {
+		modelsEducationTestList = make([]models.EducationTest, len(source))
+		for i := 0; i < len(source); i++ {
+			modelsEducationTestList[i] = c.TestDBToModel(source[i])
+		}
+	}
+	return modelsEducationTestList
+}
+func (c *ConverterImpl) TestsModelToDB(source []models.EducationTest) []sqlc.EducationTest {
+	var postgresEducationTestList []sqlc.EducationTest
+	if source != nil {
+		postgresEducationTestList = make([]sqlc.EducationTest, len(source))
+		for i := 0; i < len(source); i++ {
+			postgresEducationTestList[i] = c.TestModelToDB(source[i])
+		}
+	}
+	return postgresEducationTestList
 }

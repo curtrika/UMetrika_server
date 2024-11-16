@@ -1,6 +1,29 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
+type EducationOwner struct {
+	OwnerID   uuid.UUID
+	OwnerName string
+	PassHash  []byte
+	Email     string
+	CreatedAt time.Time
+}
+
+type EducationTest struct {
+	TestID      uuid.UUID
+	OwnerID     uuid.UUID
+	TestName    string
+	Description string
+	TestType    string
+	CreatedAt   time.Time
+}
+
+// deprecate
 
 type PsychologicalPerformance struct {
 	ID                  int32
