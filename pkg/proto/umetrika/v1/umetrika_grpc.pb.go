@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UMetrika_Ping_FullMethodName                 = "/umetrika.UMetrika/Ping"
-	UMetrika_CreateOwner_FullMethodName          = "/umetrika.UMetrika/CreateOwner"
-	UMetrika_AddNewTest_FullMethodName           = "/umetrika.UMetrika/AddNewTest"
-	UMetrika_GetFullTestByOwnerId_FullMethodName = "/umetrika.UMetrika/GetFullTestByOwnerId"
+	UMetrika_Ping_FullMethodName                            = "/umetrika.UMetrika/Ping"
+	UMetrika_CreateOwner_FullMethodName                     = "/umetrika.UMetrika/CreateOwner"
+	UMetrika_AddNewTest_FullMethodName                      = "/umetrika.UMetrika/AddNewTest"
+	UMetrika_GetFullTestByOwnerId_FullMethodName            = "/umetrika.UMetrika/GetFullTestByOwnerId"
+	UMetrika_GetTeacherDisciplinesAndClasses_FullMethodName = "/umetrika.UMetrika/GetTeacherDisciplinesAndClasses"
 )
 
 // UMetrikaClient is the client API for UMetrika service.
@@ -36,6 +37,7 @@ type UMetrikaClient interface {
 	// Add New Test RPC
 	AddNewTest(ctx context.Context, in *TestPost, opts ...grpc.CallOption) (*TestResult, error)
 	GetFullTestByOwnerId(ctx context.Context, in *TestOwnerGet, opts ...grpc.CallOption) (*TestsGet, error)
+	GetTeacherDisciplinesAndClasses(ctx context.Context, in *GetTeacherDisciplinesAndClassesRequest, opts ...grpc.CallOption) (*GetTeacherDisciplinesAndClassesResponse, error)
 }
 
 type uMetrikaClient struct {
@@ -86,6 +88,16 @@ func (c *uMetrikaClient) GetFullTestByOwnerId(ctx context.Context, in *TestOwner
 	return out, nil
 }
 
+func (c *uMetrikaClient) GetTeacherDisciplinesAndClasses(ctx context.Context, in *GetTeacherDisciplinesAndClassesRequest, opts ...grpc.CallOption) (*GetTeacherDisciplinesAndClassesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTeacherDisciplinesAndClassesResponse)
+	err := c.cc.Invoke(ctx, UMetrika_GetTeacherDisciplinesAndClasses_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UMetrikaServer is the server API for UMetrika service.
 // All implementations must embed UnimplementedUMetrikaServer
 // for forward compatibility.
@@ -97,6 +109,7 @@ type UMetrikaServer interface {
 	// Add New Test RPC
 	AddNewTest(context.Context, *TestPost) (*TestResult, error)
 	GetFullTestByOwnerId(context.Context, *TestOwnerGet) (*TestsGet, error)
+	GetTeacherDisciplinesAndClasses(context.Context, *GetTeacherDisciplinesAndClassesRequest) (*GetTeacherDisciplinesAndClassesResponse, error)
 	mustEmbedUnimplementedUMetrikaServer()
 }
 
@@ -118,6 +131,9 @@ func (UnimplementedUMetrikaServer) AddNewTest(context.Context, *TestPost) (*Test
 }
 func (UnimplementedUMetrikaServer) GetFullTestByOwnerId(context.Context, *TestOwnerGet) (*TestsGet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFullTestByOwnerId not implemented")
+}
+func (UnimplementedUMetrikaServer) GetTeacherDisciplinesAndClasses(context.Context, *GetTeacherDisciplinesAndClassesRequest) (*GetTeacherDisciplinesAndClassesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTeacherDisciplinesAndClasses not implemented")
 }
 func (UnimplementedUMetrikaServer) mustEmbedUnimplementedUMetrikaServer() {}
 func (UnimplementedUMetrikaServer) testEmbeddedByValue()                  {}
@@ -212,6 +228,24 @@ func _UMetrika_GetFullTestByOwnerId_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UMetrika_GetTeacherDisciplinesAndClasses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTeacherDisciplinesAndClassesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UMetrikaServer).GetTeacherDisciplinesAndClasses(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UMetrika_GetTeacherDisciplinesAndClasses_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UMetrikaServer).GetTeacherDisciplinesAndClasses(ctx, req.(*GetTeacherDisciplinesAndClassesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UMetrika_ServiceDesc is the grpc.ServiceDesc for UMetrika service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -234,6 +268,10 @@ var UMetrika_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetFullTestByOwnerId",
 			Handler:    _UMetrika_GetFullTestByOwnerId_Handler,
+		},
+		{
+			MethodName: "GetTeacherDisciplinesAndClasses",
+			Handler:    _UMetrika_GetTeacherDisciplinesAndClasses_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

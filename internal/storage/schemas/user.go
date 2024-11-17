@@ -11,9 +11,8 @@ type UserSchema struct {
 	MiddleName string    `json:"middle_name"`
 	LastName   string    `json:"last_name"`
 	Email      string    `json:"email"`
-	PassHash   []byte    `json:"pass_hash"`
 	Gender     bool      `json:"gender"`
-	RoleID     uuid.UUID `json:"role_id"`
+	Role       string    `json:"role"`
 	SchoolID   uuid.UUID `json:"school_id"`
 	ClassesID  uuid.UUID `json:"classes_id"`
 	CreatedAt  time.Time `json:"created_at"`

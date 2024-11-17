@@ -11,9 +11,8 @@ type User struct {
 	MiddleName string
 	LastName   string
 	Email      string
-	PassHash   []byte
 	Gender     bool
-	RoleID     uuid.UUID
+	Role       string
 	SchoolID   uuid.UUID
 	ClassesID  uuid.UUID
 	CreatedAt  time.Time

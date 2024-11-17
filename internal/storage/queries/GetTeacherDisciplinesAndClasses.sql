@@ -1,5 +1,4 @@
 -- GetTeacherDisciplinesAndClasses method
-
 SELECT JSON_BUILD_OBJECT(
     'id', sg.discipline_id,
     'title', (SELECT name FROM discipline dis WHERE dis.id = sg.discipline_id),

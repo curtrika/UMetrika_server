@@ -10,6 +10,10 @@ import (
 )
 
 // goverter:converter
+// goverter:output:package :converter
+// goverter:useZeroValueOnPointerInconsistency
+// goverter:ignoreUnexported
+// goverter:matchIgnoreCase
 // goverter:extend StringToUUID
 // goverter:extend UUIDToString
 // goverter:extend UUIDToString
@@ -41,6 +45,8 @@ type Converter interface {
 
 	AnswerDTOsProtoToModel(q []*v1.AnswerPostDTO) ([]*models.EducationAnswer, error)
 	// TestModelToProto(proto *v1.TestPost) (*models.EducationTestWithQuestions, error)
+
+	TeacherDisciplineToProto(model models.TeacherDiscipline) (*v1.TeacherDiscipline, error)
 }
 
 func StringToUUID(s string) (uuid.UUID, error) {

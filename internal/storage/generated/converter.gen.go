@@ -65,16 +65,8 @@ func (c *ConverterImpl) schemasUserSchemaToModelsUser(source schemas.UserSchema)
 	modelsUser.MiddleName = source.MiddleName
 	modelsUser.LastName = source.LastName
 	modelsUser.Email = source.Email
-	var byteList []uint8
-	if source.PassHash != nil {
-		byteList = make([]uint8, len(source.PassHash))
-		for i := 0; i < len(source.PassHash); i++ {
-			byteList[i] = source.PassHash[i]
-		}
-	}
-	modelsUser.PassHash = byteList
 	modelsUser.Gender = source.Gender
-	modelsUser.RoleID = storage.UUIDtoUUID(source.RoleID)
+	modelsUser.Role = source.Role
 	modelsUser.SchoolID = storage.UUIDtoUUID(source.SchoolID)
 	modelsUser.ClassesID = storage.UUIDtoUUID(source.ClassesID)
 	modelsUser.CreatedAt = c.timeTimeToTimeTime(source.CreatedAt)
