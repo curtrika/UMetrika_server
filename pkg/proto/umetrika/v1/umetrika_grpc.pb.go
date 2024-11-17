@@ -19,8 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UMetrika_Ping_FullMethodName        = "/umetrika.UMetrika/Ping"
-	UMetrika_CreateOwner_FullMethodName = "/umetrika.UMetrika/CreateOwner"
+	UMetrika_Ping_FullMethodName                 = "/umetrika.UMetrika/Ping"
+	UMetrika_CreateOwner_FullMethodName          = "/umetrika.UMetrika/CreateOwner"
+	UMetrika_AddNewTest_FullMethodName           = "/umetrika.UMetrika/AddNewTest"
+	UMetrika_GetFullTestByOwnerId_FullMethodName = "/umetrika.UMetrika/GetFullTestByOwnerId"
 )
 
 // UMetrikaClient is the client API for UMetrika service.
@@ -29,7 +31,11 @@ const (
 type UMetrikaClient interface {
 	// Ping RPC
 	Ping(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*PingMessage, error)
+	// Create Owner RPC
 	CreateOwner(ctx context.Context, in *OwnerPost, opts ...grpc.CallOption) (*OwnerResult, error)
+	// Add New Test RPC
+	AddNewTest(ctx context.Context, in *TestPost, opts ...grpc.CallOption) (*TestResult, error)
+	GetFullTestByOwnerId(ctx context.Context, in *TestOwnerGet, opts ...grpc.CallOption) (*TestsGet, error)
 }
 
 type uMetrikaClient struct {
@@ -60,13 +66,37 @@ func (c *uMetrikaClient) CreateOwner(ctx context.Context, in *OwnerPost, opts ..
 	return out, nil
 }
 
+func (c *uMetrikaClient) AddNewTest(ctx context.Context, in *TestPost, opts ...grpc.CallOption) (*TestResult, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TestResult)
+	err := c.cc.Invoke(ctx, UMetrika_AddNewTest_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *uMetrikaClient) GetFullTestByOwnerId(ctx context.Context, in *TestOwnerGet, opts ...grpc.CallOption) (*TestsGet, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TestsGet)
+	err := c.cc.Invoke(ctx, UMetrika_GetFullTestByOwnerId_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UMetrikaServer is the server API for UMetrika service.
 // All implementations must embed UnimplementedUMetrikaServer
 // for forward compatibility.
 type UMetrikaServer interface {
 	// Ping RPC
 	Ping(context.Context, *EmptyMessage) (*PingMessage, error)
+	// Create Owner RPC
 	CreateOwner(context.Context, *OwnerPost) (*OwnerResult, error)
+	// Add New Test RPC
+	AddNewTest(context.Context, *TestPost) (*TestResult, error)
+	GetFullTestByOwnerId(context.Context, *TestOwnerGet) (*TestsGet, error)
 	mustEmbedUnimplementedUMetrikaServer()
 }
 
@@ -82,6 +112,12 @@ func (UnimplementedUMetrikaServer) Ping(context.Context, *EmptyMessage) (*PingMe
 }
 func (UnimplementedUMetrikaServer) CreateOwner(context.Context, *OwnerPost) (*OwnerResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOwner not implemented")
+}
+func (UnimplementedUMetrikaServer) AddNewTest(context.Context, *TestPost) (*TestResult, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNewTest not implemented")
+}
+func (UnimplementedUMetrikaServer) GetFullTestByOwnerId(context.Context, *TestOwnerGet) (*TestsGet, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFullTestByOwnerId not implemented")
 }
 func (UnimplementedUMetrikaServer) mustEmbedUnimplementedUMetrikaServer() {}
 func (UnimplementedUMetrikaServer) testEmbeddedByValue()                  {}
@@ -140,6 +176,42 @@ func _UMetrika_CreateOwner_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UMetrika_AddNewTest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TestPost)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UMetrikaServer).AddNewTest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UMetrika_AddNewTest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UMetrikaServer).AddNewTest(ctx, req.(*TestPost))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UMetrika_GetFullTestByOwnerId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TestOwnerGet)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UMetrikaServer).GetFullTestByOwnerId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UMetrika_GetFullTestByOwnerId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UMetrikaServer).GetFullTestByOwnerId(ctx, req.(*TestOwnerGet))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UMetrika_ServiceDesc is the grpc.ServiceDesc for UMetrika service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -154,6 +226,14 @@ var UMetrika_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateOwner",
 			Handler:    _UMetrika_CreateOwner_Handler,
+		},
+		{
+			MethodName: "AddNewTest",
+			Handler:    _UMetrika_AddNewTest_Handler,
+		},
+		{
+			MethodName: "GetFullTestByOwnerId",
+			Handler:    _UMetrika_GetFullTestByOwnerId_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS education.tests (
     FOREIGN KEY (owner_id) REFERENCES education.owners(owner_id) ON DELETE CASCADE
 );
 
+
 -- Questions Table
 CREATE TABLE IF NOT EXISTS education.questions (
     question_id uuid PRIMARY KEY default gen_random_uuid(),

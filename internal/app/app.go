@@ -52,9 +52,11 @@ type Repository interface {
 
 type testsRepo interface {
 	CreateOwner(ctx context.Context, name string, email string, pass_hash []byte) (models.EducationOwner, error)
-	CreateTest(ctx context.Context, testName string, description string, testType string) (models.EducationTest, error)
+	CreateTest(ctx context.Context, testName string, description string, testType string, owner uuid.UUID) (models.EducationTest, error)
 	GetOwner(ctx context.Context, ownerId uuid.UUID) (models.EducationOwner, error)
 	GetTestsByOwnerId(ctx context.Context, ownerId uuid.UUID) ([]models.EducationTest, error)
+	GetFullTestsByOwnerID(ctx context.Context, ownerId uuid.UUID) ([]models.EducationTestFull, error)
+	InsertQuestionsToTest(ctx context.Context, questions []*models.QuestionAnswer) error
 }
 
 func Init(

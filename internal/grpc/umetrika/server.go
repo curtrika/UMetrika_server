@@ -23,9 +23,11 @@ type serverAPI struct {
 
 type testsBackend interface {
 	CreateOwner(ctx context.Context, name string, email string, pass_hash []byte) (models.EducationOwner, error)
-	CreateTest(ctx context.Context, testName string, description string, testType string) (models.EducationTest, error)
+	CreateTest(ctx context.Context, testName string, description string, testType string, owner uuid.UUID) (models.EducationTest, error)
 	GetOwner(ctx context.Context, ownerId uuid.UUID) (models.EducationOwner, error)
 	GetTestsByOwnerId(ctx context.Context, ownerId uuid.UUID) ([]models.EducationTest, error)
+	InsertQuestionsToTest(ctx context.Context, questions []*models.QuestionAnswer) error
+	GetFullTestsByOwnerId(ctx context.Context, ownerId uuid.UUID) ([]models.EducationTestFull, error)
 }
 
 type UMetrika interface {
@@ -86,3 +88,104 @@ func (s *serverAPI) CreateOwner(ctx context.Context, req *umetrikav1.OwnerPost) 
 	}
 	return s.converter.OwnerModelToProto(&res), nil
 }
+
+func (s *serverAPI) AddNewTest(ctx context.Context, req *umetrikav1.TestPost) (*umetrikav1.TestResult, error) {
+	if req.TestName == "" || len(req.Questions) == 0 || req.OwnerId == "" {
+		return nil, fmt.Errorf("not enough data")
+	}
+	u, err := StringToUUID(req.OwnerId)
+	if err != nil {
+		return nil, fmt.Errorf("wrong id format")
+	}
+	questions, err := s.converter.QuestionDTOsProtoToModel(req.Questions)
+	if err != nil {
+		return nil, fmt.Errorf("errors with questions conversion")
+	}
+
+	test, err := s.umetrika.CreateTest(ctx, req.TestName, req.Description, req.TestType, u)
+	if err != nil {
+		return nil, fmt.Errorf("error inserting test: %w", err)
+	}
+	fmt.Println(test)
+
+	var questionAnswer []*models.QuestionAnswer
+	for i, question := range questions {
+		question.TestID = test.TestID
+		questionAnswer = append(questionAnswer, &models.QuestionAnswer{
+			TestID:    test.TestID,
+			Questions: *question,
+		})
+		answers, err := s.converter.AnswerDTOsProtoToModel(req.Questions[i].Answers)
+		if err != nil {
+			return nil, fmt.Errorf("errors with questions conversion")
+		}
+		for _, answer := range answers {
+			questionAnswer[i].Answers = append(questionAnswer[i].Answers, *answer)
+		}
+	}
+	err = s.umetrika.InsertQuestionsToTest(ctx, questionAnswer)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.converter.TestModelToProto(&test)
+}
+
+func (s *serverAPI) GetFullTestByOwnerId(ctx context.Context, req *umetrikav1.TestOwnerGet) (*umetrikav1.TestsGet, error) {
+	u, err := StringToUUID(req.OwnerId)
+	if err != nil {
+		return nil, fmt.Errorf("wrong uuid format: %w", err)
+	}
+	fmt.Println(u.String())
+	test, err := s.umetrika.GetFullTestsByOwnerId(ctx, u)
+	if err != nil {
+		return nil, err
+	}
+	return ConvertFullTestToProto(test), nil
+}
+
+func ConvertFullTestToProto(tests []models.EducationTestFull) *umetrikav1.TestsGet {
+	var protoTests []*umetrikav1.TestGet
+
+	for _, test := range tests {
+		// Convert questions
+		var protoQuestions []*umetrikav1.QuestionGetDTO
+		for _, question := range test.Questions {
+			// Convert answers
+			var protoAnswers []*umetrikav1.AnswerGetDTO
+			for _, answer := range question.Answers {
+				protoAnswers = append(protoAnswers, &umetrikav1.AnswerGetDTO{
+					AnswerId:    answer.AnswerID.String(),
+					AnswerText:  answer.AnswerText,
+					AnswerOrder: answer.AnswerOrder,
+				})
+			}
+
+			// Add converted question
+			protoQuestions = append(protoQuestions, &umetrikav1.QuestionGetDTO{
+				QuestionId:    question.QuestionID.String(),
+				QuestionText:  question.QuestionText,
+				QuestionOrder: question.QuestionOrder,
+				QuestionType:  question.QuestionType,
+				Answers:       protoAnswers,
+			})
+			fmt.Println(protoAnswers)
+		}
+
+		// Add converted test
+		protoTests = append(protoTests, &umetrikav1.TestGet{
+			TestId:      test.TestID.String(),
+			TestName:    test.TestName,
+			OwnerId:     test.OwnerID.String(),
+			Description: test.Description,
+			TestType:    test.TestType,
+			Questions:   protoQuestions,
+		})
+	}
+
+	return &umetrikav1.TestsGet{
+		Tests: protoTests,
+	}
+}
+
+// func (UnimplementedUMetrikaServer) AddNewTest(context.Context, *TestPost) (*TestResult, error) {

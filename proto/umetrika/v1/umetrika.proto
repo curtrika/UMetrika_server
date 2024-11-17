@@ -7,7 +7,6 @@ option go_package = "github.com/curtrika/UMetrika_server/pkg/proto/umetrika/v1;v
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
-
 service UMetrika {
   // Ping RPC
   rpc Ping(EmptyMessage) returns (PingMessage) {
@@ -16,29 +15,104 @@ service UMetrika {
     };
   }
 
+  // Create Owner RPC
   rpc CreateOwner(OwnerPost) returns (OwnerResult) {
     option (google.api.http) = {
       post: "/api/v1/umetrika/owner"
-		  body: "*"
+      body: "*"
     };
   }
+
+  // Add New Test RPC
+  rpc AddNewTest(TestPost) returns (TestResult) {
+    option (google.api.http) = {
+      post: "/api/v1/umetrika/tests"
+      body: "*"
+    };
+  }
+
+  rpc GetFullTestByOwnerId(TestOwnerGet) returns (TestsGet) {
+    option (google.api.http) = {
+      get: "/api/v1/umetrika/tests"
+    };
+  }
+
 }
 
+// Common Messages
 message PingMessage {
   string message = 1;
 }
 
+message EmptyMessage {}
+
 message OwnerPost {
-	string ownerName = 1;
-	string password = 2;
-	string email = 3;
+  string owner_name = 1;
+  string password = 2;
+  string email = 3;
 }
 
 message OwnerResult {
-  string ownerID = 1;
-	string ownerName = 2;
-	string email = 3;
-	google.protobuf.Timestamp created_at = 4;
+  string owner_id = 1;
+  string owner_name = 2;
+  string email = 3;
+  google.protobuf.Timestamp created_at = 4;
 }
 
-message EmptyMessage {}
+message TestPost {
+	string test_name = 1;
+	string owner_id = 2;
+	string description = 3;
+	string test_type = 4;
+	repeated QuestionPostDTO questions = 5;
+}
+
+message QuestionPostDTO {
+		string question_text = 1;
+		int32 question_order = 2;
+		string question_type = 3;
+		repeated AnswerPostDTO answers = 4;
+}
+
+message AnswerPostDTO {
+		string answer_text = 1;
+		int32 answer_order = 2;
+}
+
+message TestResult {
+		string test_id = 1;
+		string owner_id = 2;
+		string test_name = 3;
+		google.protobuf.Timestamp created_at = 4;
+}
+
+message TestOwnerGet {
+  string owner_id = 1;
+}
+
+message TestsGet {
+	repeated TestGet tests = 1;
+}
+
+message TestGet {
+  string test_id = 1;
+	string test_name = 2;
+	string owner_id = 3;
+	string description = 4;
+	string test_type = 5;
+	repeated QuestionGetDTO questions = 6;
+}
+
+message QuestionGetDTO {
+		string question_id = 1;
+		string question_text = 2;
+		int32 question_order = 3;
+		string question_type = 4;
+		repeated AnswerGetDTO answers = 5;
+}
+
+message AnswerGetDTO {
+		string answer_id = 1;
+		string answer_text = 2;
+		int32 answer_order = 3;
+}

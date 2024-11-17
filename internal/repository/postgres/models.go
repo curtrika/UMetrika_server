@@ -20,6 +20,8 @@ import (
 // goverter:extend TimeToTimestamp
 // goverter:extend PostgresTextToString
 // goverter:extend StringToPostgresText
+// goverter:extend NumericToInt
+// goverter:extend IntToNumeric
 type Converter interface {
 	OwnerDBToModel(dbModel postgres.EducationOwner) models.EducationOwner
 	OwnerModelToDb(Model models.EducationOwner) postgres.EducationOwner
@@ -27,6 +29,19 @@ type Converter interface {
 	TestModelToDB(model models.EducationTest) postgres.EducationTest
 	TestsDBToModel(dbModel []postgres.EducationTest) []models.EducationTest
 	TestsModelToDB(model []models.EducationTest) []postgres.EducationTest
+
+	QuestionModelToDB(model models.EducationQuestion) postgres.EducationQuestion
+	QuestionDBToModel(dbModel postgres.EducationQuestion) models.EducationQuestion
+
+	QuestionsModelToDB(model []models.EducationQuestion) []postgres.EducationQuestion
+	QuestionsDBToModel(dbModel []postgres.EducationQuestion) []models.EducationQuestion
+
+	AnswerModelToDB(model models.EducationAnswer) postgres.EducationAnswer
+	AnswerDBToModel(dbModel postgres.EducationAnswer) models.EducationAnswer
+
+	AnswersModelToDB(model []models.EducationAnswer) []postgres.EducationAnswer
+	AnswersDBToModel(dbModel []postgres.EducationAnswer) []models.EducationAnswer
+
 	// PsychologicalPerfomanceDBToModel(dbModel postgres.PsychologicalPerformance) models.PsychologicalPerformance
 	// PsychologicalPerfomanceModelToDB(model models.PsychologicalPerformance) postgres.PsychologicalPerformance
 	//
@@ -87,5 +102,15 @@ func PostgresTextToString(t pgtype.Text) string {
 func StringToPostgresText(s string) pgtype.Text {
 	ret := pgtype.Text{}
 	ret.Scan(&s)
+	return ret
+}
+
+func NumericToInt(val pgtype.Numeric) int {
+	return int(val.Int.Int64())
+}
+
+func IntToNumeric(val int) pgtype.Numeric {
+	ret := pgtype.Numeric{}
+	ret.Scan(&val)
 	return ret
 }

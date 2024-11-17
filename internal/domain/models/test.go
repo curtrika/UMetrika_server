@@ -23,6 +23,57 @@ type EducationTest struct {
 	CreatedAt   time.Time
 }
 
+type EducationTestFull struct {
+	TestID      uuid.UUID
+	OwnerID     uuid.UUID
+	TestName    string
+	Description string
+	TestType    string
+	CreatedAt   time.Time
+	Questions   []*EducationQuestionFull
+}
+
+type EducationQuestion struct {
+	QuestionID    uuid.UUID
+	TestID        uuid.UUID
+	QuestionText  string
+	QuestionType  string
+	QuestionOrder int32
+	CreatedAt     time.Time
+}
+
+type EducationQuestionFull struct {
+	QuestionID    uuid.UUID
+	TestID        uuid.UUID
+	QuestionText  string
+	QuestionType  string
+	QuestionOrder int32
+	CreatedAt     time.Time
+	Answers       []EducationAnswer
+}
+
+type QuestionAnswer struct {
+	TestID    uuid.UUID
+	Questions EducationQuestion
+	Answers   []EducationAnswer
+}
+
+type EducationAnswer struct {
+	AnswerID    uuid.UUID
+	QuestionID  uuid.UUID
+	AnswerText  string
+	AnswerOrder int32
+	ScoreValue  int
+	CreatedAt   time.Time
+	// IsCorrect *bool
+}
+
+// type EducationTestWithQuestions struct {
+// 	EducationTest
+// 	Questions []EducationQuestion
+// 	// IsGraded  bool
+// }
+
 // deprecate
 
 type PsychologicalPerformance struct {

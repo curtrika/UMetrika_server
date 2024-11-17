@@ -11,6 +11,50 @@ import (
 
 type ConverterImpl struct{}
 
+func (c *ConverterImpl) AnswerDBToModel(source sqlc.EducationAnswer) models.EducationAnswer {
+	var modelsEducationAnswer models.EducationAnswer
+	modelsEducationAnswer.AnswerID = postgres.UUIDPostgresToGoogle(source.AnswerID)
+	modelsEducationAnswer.QuestionID = postgres.UUIDPostgresToGoogle(source.QuestionID)
+	modelsEducationAnswer.AnswerText = source.AnswerText
+	modelsEducationAnswer.AnswerOrder = source.AnswerOrder
+	modelsEducationAnswer.ScoreValue = postgres.NumericToInt(source.ScoreValue)
+	modelsEducationAnswer.CreatedAt = postgres.TimestampToTime(source.CreatedAt)
+	return modelsEducationAnswer
+}
+
+func (c *ConverterImpl) AnswerModelToDB(source models.EducationAnswer) sqlc.EducationAnswer {
+	var postgresEducationAnswer sqlc.EducationAnswer
+	postgresEducationAnswer.AnswerID = postgres.UUIDGoogleToPostgres(source.AnswerID)
+	postgresEducationAnswer.QuestionID = postgres.UUIDGoogleToPostgres(source.QuestionID)
+	postgresEducationAnswer.AnswerText = source.AnswerText
+	postgresEducationAnswer.AnswerOrder = source.AnswerOrder
+	postgresEducationAnswer.ScoreValue = postgres.IntToNumeric(source.ScoreValue)
+	postgresEducationAnswer.CreatedAt = postgres.TimeToTimestamp(source.CreatedAt)
+	return postgresEducationAnswer
+}
+
+func (c *ConverterImpl) AnswersDBToModel(source []sqlc.EducationAnswer) []models.EducationAnswer {
+	var modelsEducationAnswerList []models.EducationAnswer
+	if source != nil {
+		modelsEducationAnswerList = make([]models.EducationAnswer, len(source))
+		for i := 0; i < len(source); i++ {
+			modelsEducationAnswerList[i] = c.AnswerDBToModel(source[i])
+		}
+	}
+	return modelsEducationAnswerList
+}
+
+func (c *ConverterImpl) AnswersModelToDB(source []models.EducationAnswer) []sqlc.EducationAnswer {
+	var postgresEducationAnswerList []sqlc.EducationAnswer
+	if source != nil {
+		postgresEducationAnswerList = make([]sqlc.EducationAnswer, len(source))
+		for i := 0; i < len(source); i++ {
+			postgresEducationAnswerList[i] = c.AnswerModelToDB(source[i])
+		}
+	}
+	return postgresEducationAnswerList
+}
+
 func (c *ConverterImpl) OwnerDBToModel(source sqlc.EducationOwner) models.EducationOwner {
 	var modelsEducationOwner models.EducationOwner
 	modelsEducationOwner.OwnerID = postgres.UUIDPostgresToGoogle(source.OwnerID)
@@ -25,6 +69,7 @@ func (c *ConverterImpl) OwnerDBToModel(source sqlc.EducationOwner) models.Educat
 	modelsEducationOwner.CreatedAt = postgres.TimestampToTime(source.CreatedAt)
 	return modelsEducationOwner
 }
+
 func (c *ConverterImpl) OwnerModelToDb(source models.EducationOwner) sqlc.EducationOwner {
 	var postgresEducationOwner sqlc.EducationOwner
 	postgresEducationOwner.OwnerID = postgres.UUIDGoogleToPostgres(source.OwnerID)
@@ -39,6 +84,51 @@ func (c *ConverterImpl) OwnerModelToDb(source models.EducationOwner) sqlc.Educat
 	postgresEducationOwner.CreatedAt = postgres.TimeToTimestamp(source.CreatedAt)
 	return postgresEducationOwner
 }
+
+func (c *ConverterImpl) QuestionDBToModel(source sqlc.EducationQuestion) models.EducationQuestion {
+	var modelsEducationQuestion models.EducationQuestion
+	modelsEducationQuestion.QuestionID = postgres.UUIDPostgresToGoogle(source.QuestionID)
+	modelsEducationQuestion.TestID = postgres.UUIDPostgresToGoogle(source.TestID)
+	modelsEducationQuestion.QuestionText = source.QuestionText
+	modelsEducationQuestion.QuestionType = string(source.QuestionType)
+	modelsEducationQuestion.QuestionOrder = source.QuestionOrder
+	modelsEducationQuestion.CreatedAt = postgres.TimestampToTime(source.CreatedAt)
+	return modelsEducationQuestion
+}
+
+func (c *ConverterImpl) QuestionModelToDB(source models.EducationQuestion) sqlc.EducationQuestion {
+	var postgresEducationQuestion sqlc.EducationQuestion
+	postgresEducationQuestion.QuestionID = postgres.UUIDGoogleToPostgres(source.QuestionID)
+	postgresEducationQuestion.TestID = postgres.UUIDGoogleToPostgres(source.TestID)
+	postgresEducationQuestion.QuestionText = source.QuestionText
+	postgresEducationQuestion.QuestionType = sqlc.QuestionType(source.QuestionType)
+	postgresEducationQuestion.QuestionOrder = source.QuestionOrder
+	postgresEducationQuestion.CreatedAt = postgres.TimeToTimestamp(source.CreatedAt)
+	return postgresEducationQuestion
+}
+
+func (c *ConverterImpl) QuestionsDBToModel(source []sqlc.EducationQuestion) []models.EducationQuestion {
+	var modelsEducationQuestionList []models.EducationQuestion
+	if source != nil {
+		modelsEducationQuestionList = make([]models.EducationQuestion, len(source))
+		for i := 0; i < len(source); i++ {
+			modelsEducationQuestionList[i] = c.QuestionDBToModel(source[i])
+		}
+	}
+	return modelsEducationQuestionList
+}
+
+func (c *ConverterImpl) QuestionsModelToDB(source []models.EducationQuestion) []sqlc.EducationQuestion {
+	var postgresEducationQuestionList []sqlc.EducationQuestion
+	if source != nil {
+		postgresEducationQuestionList = make([]sqlc.EducationQuestion, len(source))
+		for i := 0; i < len(source); i++ {
+			postgresEducationQuestionList[i] = c.QuestionModelToDB(source[i])
+		}
+	}
+	return postgresEducationQuestionList
+}
+
 func (c *ConverterImpl) TestDBToModel(source sqlc.EducationTest) models.EducationTest {
 	var modelsEducationTest models.EducationTest
 	modelsEducationTest.TestID = postgres.UUIDPostgresToGoogle(source.TestID)
@@ -49,6 +139,7 @@ func (c *ConverterImpl) TestDBToModel(source sqlc.EducationTest) models.Educatio
 	modelsEducationTest.CreatedAt = postgres.TimestampToTime(source.CreatedAt)
 	return modelsEducationTest
 }
+
 func (c *ConverterImpl) TestModelToDB(source models.EducationTest) sqlc.EducationTest {
 	var postgresEducationTest sqlc.EducationTest
 	postgresEducationTest.TestID = postgres.UUIDGoogleToPostgres(source.TestID)
@@ -59,6 +150,7 @@ func (c *ConverterImpl) TestModelToDB(source models.EducationTest) sqlc.Educatio
 	postgresEducationTest.CreatedAt = postgres.TimeToTimestamp(source.CreatedAt)
 	return postgresEducationTest
 }
+
 func (c *ConverterImpl) TestsDBToModel(source []sqlc.EducationTest) []models.EducationTest {
 	var modelsEducationTestList []models.EducationTest
 	if source != nil {
@@ -69,6 +161,7 @@ func (c *ConverterImpl) TestsDBToModel(source []sqlc.EducationTest) []models.Edu
 	}
 	return modelsEducationTestList
 }
+
 func (c *ConverterImpl) TestsModelToDB(source []models.EducationTest) []sqlc.EducationTest {
 	var postgresEducationTestList []sqlc.EducationTest
 	if source != nil {

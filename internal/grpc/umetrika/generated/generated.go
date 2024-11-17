@@ -11,11 +11,37 @@ import (
 
 type ConverterImpl struct{}
 
+func (c *ConverterImpl) AnswerDTOProtoToModel(source *v1.AnswerPostDTO) (*models.EducationAnswer, error) {
+	var pModelsEducationAnswer *models.EducationAnswer
+	if source != nil {
+		var modelsEducationAnswer models.EducationAnswer
+		modelsEducationAnswer.AnswerText = (*source).AnswerText
+		modelsEducationAnswer.AnswerOrder = (*source).AnswerOrder
+		pModelsEducationAnswer = &modelsEducationAnswer
+	}
+	return pModelsEducationAnswer, nil
+}
+
+func (c *ConverterImpl) AnswerDTOsProtoToModel(source []*v1.AnswerPostDTO) ([]*models.EducationAnswer, error) {
+	var pModelsEducationAnswerList []*models.EducationAnswer
+	if source != nil {
+		pModelsEducationAnswerList = make([]*models.EducationAnswer, len(source))
+		for i := 0; i < len(source); i++ {
+			pModelsEducationAnswer, err := c.AnswerDTOProtoToModel(source[i])
+			if err != nil {
+				return nil, err
+			}
+			pModelsEducationAnswerList[i] = pModelsEducationAnswer
+		}
+	}
+	return pModelsEducationAnswerList, nil
+}
+
 func (c *ConverterImpl) OwnerModelToProto(source *models.EducationOwner) *v1.OwnerResult {
 	var pV1OwnerResult *v1.OwnerResult
 	if source != nil {
 		var v1OwnerResult v1.OwnerResult
-		v1OwnerResult.OwnerID = umetrika.UUIDToString((*source).OwnerID)
+		v1OwnerResult.OwnerId = umetrika.UUIDToString((*source).OwnerID)
 		v1OwnerResult.OwnerName = (*source).OwnerName
 		v1OwnerResult.Email = (*source).Email
 		v1OwnerResult.CreatedAt = umetrika.TimeToTimeStamp((*source).CreatedAt)
@@ -23,6 +49,7 @@ func (c *ConverterImpl) OwnerModelToProto(source *models.EducationOwner) *v1.Own
 	}
 	return pV1OwnerResult
 }
+
 func (c *ConverterImpl) OwnerProtoToModel(source *v1.OwnerPost) (*models.EducationOwner, error) {
 	var pModelsEducationOwner *models.EducationOwner
 	if source != nil {
@@ -32,4 +59,61 @@ func (c *ConverterImpl) OwnerProtoToModel(source *v1.OwnerPost) (*models.Educati
 		pModelsEducationOwner = &modelsEducationOwner
 	}
 	return pModelsEducationOwner, nil
+}
+
+func (c *ConverterImpl) QuestionDTOProtoToModel(source *v1.QuestionPostDTO) (*models.EducationQuestion, error) {
+	var pModelsEducationQuestion *models.EducationQuestion
+	if source != nil {
+		var modelsEducationQuestion models.EducationQuestion
+		modelsEducationQuestion.QuestionText = (*source).QuestionText
+		modelsEducationQuestion.QuestionType = (*source).QuestionType
+		modelsEducationQuestion.QuestionOrder = (*source).QuestionOrder
+		pModelsEducationQuestion = &modelsEducationQuestion
+	}
+	return pModelsEducationQuestion, nil
+}
+
+func (c *ConverterImpl) QuestionDTOsProtoToModel(source []*v1.QuestionPostDTO) ([]*models.EducationQuestion, error) {
+	var pModelsEducationQuestionList []*models.EducationQuestion
+	if source != nil {
+		pModelsEducationQuestionList = make([]*models.EducationQuestion, len(source))
+		for i := 0; i < len(source); i++ {
+			pModelsEducationQuestion, err := c.QuestionDTOProtoToModel(source[i])
+			if err != nil {
+				return nil, err
+			}
+			pModelsEducationQuestionList[i] = pModelsEducationQuestion
+		}
+	}
+	return pModelsEducationQuestionList, nil
+}
+
+func (c *ConverterImpl) TestModelToProto(source *models.EducationTest) (*v1.TestResult, error) {
+	var pV1TestResult *v1.TestResult
+	if source != nil {
+		var v1TestResult v1.TestResult
+		v1TestResult.TestId = umetrika.UUIDToString((*source).TestID)
+		v1TestResult.OwnerId = umetrika.UUIDToString((*source).OwnerID)
+		v1TestResult.TestName = (*source).TestName
+		v1TestResult.CreatedAt = umetrika.TimeToTimeStamp((*source).CreatedAt)
+		pV1TestResult = &v1TestResult
+	}
+	return pV1TestResult, nil
+}
+
+func (c *ConverterImpl) TestProtoToModel(source *v1.TestPost) (*models.EducationTest, error) {
+	var pModelsEducationTest *models.EducationTest
+	if source != nil {
+		var modelsEducationTest models.EducationTest
+		uuidUUID, err := umetrika.StringToUUID((*source).OwnerId)
+		if err != nil {
+			return nil, err
+		}
+		modelsEducationTest.OwnerID = uuidUUID
+		modelsEducationTest.TestName = (*source).TestName
+		modelsEducationTest.Description = (*source).Description
+		modelsEducationTest.TestType = (*source).TestType
+		pModelsEducationTest = &modelsEducationTest
+	}
+	return pModelsEducationTest, nil
 }
