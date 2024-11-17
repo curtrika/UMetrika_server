@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	storage "github.com/curtrika/UMetrika_server/internal/storage/sqlc_gen"
+	"github.com/jackc/pgx/v5"
 	"os"
 
 	"github.com/curtrika/UMetrika_server/internal/domain/models"
@@ -17,27 +19,29 @@ import (
 type Storage struct {
 	cvt Converter
 	db  *sql.DB
+	*storage.Queries
 }
 
-//func DatabaseInit(databaseURL string) (*Storage, error) {
-//	db, err := sql.Open("postgres", databaseURL)
-//	if err != nil {
-//		return nil, err
-//	}
-//	conn, err := pgx.Connect(context.Background(), databaseURL)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	//if err := db.Ping(); err != nil {
-//	//	return nil, err
-//	//}
-//	queries := storage.New(conn)
-//
-//	return &Storage{
-//		db: db,
-//	}, nil
-//}
+func DatabaseInit(databaseURL string) (*Storage, error) {
+	db, err := sql.Open("postgres", databaseURL)
+	if err != nil {
+		return nil, err
+	}
+	conn, err := pgx.Connect(context.Background(), databaseURL)
+	if err != nil {
+		return nil, err
+	}
+
+	//if err := db.Ping(); err != nil {
+	//	return nil, err
+	//}
+	queries := storage.New(conn)
+
+	return &Storage{
+		db:      db,
+		Queries: queries,
+	}, nil
+}
 
 // TODO: CRUD вынести в отдельные модули
 // SaveUser saves user to db.

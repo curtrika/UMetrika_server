@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package umetrika;
+
+message TeacherDiscipline {
+  string ID = 1;
+  string Title = 2;
+  repeated Classes class = 3;
+}
+
+message Classes {
+  string ID = 1;
+  string Title = 2;
+  string Ma
+}
