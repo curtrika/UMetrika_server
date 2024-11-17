@@ -21,6 +21,7 @@ tasks:
   gen:
     desc: Сгенерировать gRPC модели
     cmds:
+      - goverter gen ./internal/...
       - mkdir -p ./pkg/proto/auth/v1
       - protoc -I proto ./proto/auth/v1/*.proto --go_out=./pkg/proto --go_opt=paths=source_relative --go-grpc_out=./pkg/proto --go-grpc_opt paths=source_relative
       - mkdir -p ./pkg/proto/admin_panel/v1

@@ -5,44 +5,39 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"os"
 
-	"github.com/curtrika/UMetrika_server/internal/converter"
 	"github.com/curtrika/UMetrika_server/internal/domain/models"
 	"github.com/curtrika/UMetrika_server/internal/storage/schemas"
-	storage "github.com/curtrika/UMetrika_server/internal/storage/sqlc_gen"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
-
 	_ "github.com/lib/pq"
 )
 
 // TODO: вынести в отдельный файл
 type Storage struct {
-	cvt converter.PsqlConverter
+	cvt Converter
 	db  *sql.DB
-	*storage.Queries
 }
 
-func DatabaseInit(databaseURL string) (*Storage, error) {
-	db, err := sql.Open("postgres", databaseURL)
-	if err != nil {
-		return nil, err
-	}
-	conn, err := pgx.Connect(context.Background(), databaseURL)
-	if err != nil {
-		return nil, err
-	}
-
-	//if err := db.Ping(); err != nil {
-	//	return nil, err
-	//}
-	queries := storage.New(conn)
-
-	return &Storage{
-		db:      db,
-		Queries: queries,
-	}, nil
-}
+//func DatabaseInit(databaseURL string) (*Storage, error) {
+//	db, err := sql.Open("postgres", databaseURL)
+//	if err != nil {
+//		return nil, err
+//	}
+//	conn, err := pgx.Connect(context.Background(), databaseURL)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	//if err := db.Ping(); err != nil {
+//	//	return nil, err
+//	//}
+//	queries := storage.New(conn)
+//
+//	return &Storage{
+//		db: db,
+//	}, nil
+//}
 
 // TODO: CRUD вынести в отдельные модули
 // SaveUser saves user to db.
@@ -97,7 +92,31 @@ func (s *Storage) GetAppById(ctx context.Context, appID int32) (*models.App, err
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	appModel := s.cvt.AppToModel(schema)
+	//appModel := s.cvt.AppToModel(schema)
 
-	return &appModel, nil
+	return nil, nil
+}
+
+func (s *Storage) GetTeacherDisciplinesAndClasses(ctx context.Context, teacherID uuid.UUID) ([]models.TeacherDiscipline, error) {
+	const op = "postgres.GetTeacherDisciplinesAndClasses"
+
+	path := "./queries/GetTeacherDisciplinesAndClasses.sql"
+	q, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("%s: ошибка при чтении файла: %s: %w", op, path, err)
+	}
+
+	var bs []byte
+	if err := s.db.QueryRowContext(ctx, string(q), teacherID).Scan(&bs); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	var TeacherDisciplinesSchema []schemas.TeacherDisciplineSchema
+	if err := json.Unmarshal(bs, &TeacherDisciplinesSchema); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	teacherDisciplines := s.cvt.TeacherDisciplinesToModel(TeacherDisciplinesSchema)
+
+	return teacherDisciplines, nil
 }

@@ -42,8 +42,6 @@ type Converter interface {
 	AnswersModelToDB(model []models.EducationAnswer) []postgres.EducationAnswer
 	AnswersDBToModel(dbModel []postgres.EducationAnswer) []models.EducationAnswer
 
-	TeacherDisciplineDBToModel(dbModel []postgres.TeacherDiscipline) []models.TeacherDiscipline
-
 	// PsychologicalPerfomanceDBToModel(dbModel postgres.PsychologicalPerformance) models.PsychologicalPerformance
 	// PsychologicalPerfomanceModelToDB(model models.PsychologicalPerformance) postgres.PsychologicalPerformance
 	//

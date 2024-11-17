@@ -171,6 +171,7 @@ SELECT JSON_BUILD_OBJECT(
             JSON_BUILD_OBJECT(
                 'id', c.id,
                 'title', concat(c.grade, ' ', c.title),
+                'main_teacher_id', c.main_teacher_id,
                 'students', (
                     SELECT JSON_AGG(
                         JSON_BUILD_OBJECT(

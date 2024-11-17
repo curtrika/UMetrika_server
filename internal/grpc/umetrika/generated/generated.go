@@ -21,7 +21,6 @@ func (c *ConverterImpl) AnswerDTOProtoToModel(source *v1.AnswerPostDTO) (*models
 	}
 	return pModelsEducationAnswer, nil
 }
-
 func (c *ConverterImpl) AnswerDTOsProtoToModel(source []*v1.AnswerPostDTO) ([]*models.EducationAnswer, error) {
 	var pModelsEducationAnswerList []*models.EducationAnswer
 	if source != nil {
@@ -36,7 +35,6 @@ func (c *ConverterImpl) AnswerDTOsProtoToModel(source []*v1.AnswerPostDTO) ([]*m
 	}
 	return pModelsEducationAnswerList, nil
 }
-
 func (c *ConverterImpl) OwnerModelToProto(source *models.EducationOwner) *v1.OwnerResult {
 	var pV1OwnerResult *v1.OwnerResult
 	if source != nil {
@@ -49,7 +47,6 @@ func (c *ConverterImpl) OwnerModelToProto(source *models.EducationOwner) *v1.Own
 	}
 	return pV1OwnerResult
 }
-
 func (c *ConverterImpl) OwnerProtoToModel(source *v1.OwnerPost) (*models.EducationOwner, error) {
 	var pModelsEducationOwner *models.EducationOwner
 	if source != nil {
@@ -60,7 +57,6 @@ func (c *ConverterImpl) OwnerProtoToModel(source *v1.OwnerPost) (*models.Educati
 	}
 	return pModelsEducationOwner, nil
 }
-
 func (c *ConverterImpl) QuestionDTOProtoToModel(source *v1.QuestionPostDTO) (*models.EducationQuestion, error) {
 	var pModelsEducationQuestion *models.EducationQuestion
 	if source != nil {
@@ -72,7 +68,6 @@ func (c *ConverterImpl) QuestionDTOProtoToModel(source *v1.QuestionPostDTO) (*mo
 	}
 	return pModelsEducationQuestion, nil
 }
-
 func (c *ConverterImpl) QuestionDTOsProtoToModel(source []*v1.QuestionPostDTO) ([]*models.EducationQuestion, error) {
 	var pModelsEducationQuestionList []*models.EducationQuestion
 	if source != nil {
@@ -87,7 +82,6 @@ func (c *ConverterImpl) QuestionDTOsProtoToModel(source []*v1.QuestionPostDTO) (
 	}
 	return pModelsEducationQuestionList, nil
 }
-
 func (c *ConverterImpl) TestModelToProto(source *models.EducationTest) (*v1.TestResult, error) {
 	var pV1TestResult *v1.TestResult
 	if source != nil {
@@ -100,7 +94,6 @@ func (c *ConverterImpl) TestModelToProto(source *models.EducationTest) (*v1.Test
 	}
 	return pV1TestResult, nil
 }
-
 func (c *ConverterImpl) TestProtoToModel(source *v1.TestPost) (*models.EducationTest, error) {
 	var pModelsEducationTest *models.EducationTest
 	if source != nil {
