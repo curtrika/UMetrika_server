@@ -49,3 +49,30 @@ WHERE t.owner_id = $1;
 SELECT *
 FROM education.tests
 WHERE owner_id = $1;
+
+-- GetTeacherDisciplinesAndClasses
+-- name: GetTeacherDisciplinesAndClasses :many
+SELECT JSON_BUILD_OBJECT(
+    'discipline_id', sg.discipline_id,
+    'discipline_title', (SELECT name FROM discipline dis WHERE dis.id = sg.discipline_id),
+    'classes', (
+        SELECT JSON_AGG(
+            JSON_BUILD_OBJECT(
+                'class_id', c.id,
+                'title', concat(c.grade, ' ', c.title),
+                'students', (
+                    SELECT JSON_AGG(
+                        JSON_BUILD_OBJECT(
+                            'id', s.id,
+                            'first_name', s.first_name,
+                            'middle_name', s.middle_name,
+                            'last_name', s.last_name
+                        )
+                    ) FROM users s WHERE s.classes_id = c.id AND s.role_id = 1
+                )
+            )
+        ) FROM classes c
+    )
+) AS result
+FROM study_group sg
+WHERE teacher_id = $1;
