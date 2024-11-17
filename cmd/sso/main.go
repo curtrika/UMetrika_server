@@ -9,6 +9,8 @@ import (
 
 	"github.com/curtrika/UMetrika_server/internal/app"
 	"github.com/curtrika/UMetrika_server/internal/config"
+	"github.com/curtrika/UMetrika_server/internal/repository/postgres"
+	dbGenerated "github.com/curtrika/UMetrika_server/internal/repository/postgres/generated"
 	"github.com/curtrika/UMetrika_server/internal/storage"
 )
 
@@ -24,14 +26,16 @@ func main() {
 
 	log := setupLogger(cfg.Env)
 
+	ctx, cancel := context.WithCancel(context.Background())
+
 	database, err := storage.DatabaseInit(cfg.DatabaseURL)
 	if err != nil {
 		panic(err)
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	testsRepo, err := postgres.New(ctx, cfg.DatabaseURL, &dbGenerated.ConverterImpl{})
 
-	application := app.Init(ctx, log, cfg.GRPC.Port, cfg.TokenTTL, database)
+	application := app.Init(ctx, log, cfg.GRPC.Port, cfg.TokenTTL, database, testsRepo)
 
 	go func() {
 		application.GRPCServer.MustRun()

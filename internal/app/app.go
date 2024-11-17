@@ -2,9 +2,10 @@ package app
 
 import (
 	"context"
-	"github.com/curtrika/UMetrika_server/internal/services/umetrika"
 	"log/slog"
 	"time"
+
+	"github.com/curtrika/UMetrika_server/internal/services/umetrika"
 
 	grpcapp "github.com/curtrika/UMetrika_server/internal/app/grpc"
 	"github.com/curtrika/UMetrika_server/internal/domain/models"
@@ -49,18 +50,28 @@ type Repository interface {
 	ListUsers(ctx context.Context) ([]storage.User, error)
 }
 
+type testsRepo interface {
+	CreateOwner(ctx context.Context, name string, email string, pass_hash []byte) (models.EducationOwner, error)
+	CreateTest(ctx context.Context, testName string, description string, testType string, owner uuid.UUID) (models.EducationTest, error)
+	GetOwner(ctx context.Context, ownerId uuid.UUID) (models.EducationOwner, error)
+	GetTestsByOwnerId(ctx context.Context, ownerId uuid.UUID) ([]models.EducationTest, error)
+	GetFullTestsByOwnerID(ctx context.Context, ownerId uuid.UUID) ([]models.EducationTestFull, error)
+	InsertQuestionsToTest(ctx context.Context, questions []*models.QuestionAnswer) error
+}
+
 func Init(
 	ctx context.Context,
 	log *slog.Logger,
 	grpcPort int,
 	tokenTTL time.Duration,
 	repo Repository,
+	tests testsRepo,
 ) *App {
 	authService := auth.New(log, repo, repo, repo, tokenTTL)
 
 	adminPanelService := admin_panel.New(log, repo)
 
-	umetrikaService := umetrika.New(log, repo)
+	umetrikaService := umetrika.New(log, tests)
 
 	grpcApp := grpcapp.New(ctx, log, authService, adminPanelService, umetrikaService, grpcPort)
 
