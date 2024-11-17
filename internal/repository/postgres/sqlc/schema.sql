@@ -1,5 +1,6 @@
 -- Create the new schema
 CREATE SCHEMA IF NOT EXISTS education;
+CREATE SCHEMA IF NOT EXISTS umetrika;
 
 CREATE EXTENSION pgcrypto;
 
@@ -87,4 +88,86 @@ CREATE TABLE IF NOT EXISTS education.test_results (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (student_id) REFERENCES education.students(student_id) ON DELETE CASCADE,
     FOREIGN KEY (test_id) REFERENCES education.tests(test_id) ON DELETE CASCADE
+);
+
+create table if not exists umetrika.users (
+    id uuid primary key default gen_random_uuid(),
+    first_name varchar(32) not null, -- имя
+    middle_name varchar(32) not null, -- отчество
+    last_name varchar(32) not null, -- фамилия
+    email varchar(32) unique not null,
+    pass_hash bytea unique not null,
+    gender bool, -- role student
+    role_id integer references roles(id),
+    school_id uuid references school(id),
+    classes_id uuid references classes(id),
+    created_at timestamp default now(),
+    updated_at timestamp default now(),
+    deleted_at timestamp default null
+);
+
+create table if not exists umetrika.problem (
+    id uuid primary key default gen_random_uuid(),
+    title varchar(1024) not null
+);
+
+create table if not exists umetrika.solution (
+    id uuid primary key default gen_random_uuid(),
+    title varchar(1024) not null,
+    problem_id uuid not null references problem(id)
+);
+
+create table if not exists umetrika.cause (
+    id uuid primary key default gen_random_uuid(),
+    title varchar(1024) not null,
+    problem_id uuid not null references problem(id)
+);
+
+create table if not exists umetrika.roles (
+    id serial primary key,
+    title varchar(64) not null
+);
+
+create table if not exists umetrika.school (
+    id uuid primary key default gen_random_uuid(),
+    large_name varchar(1024) not null, -- example Муниципальное бюджетное общеобразовательное...
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now(),
+    deleted_at timestamp default null
+);
+
+create table if not exists umetrika.classes (
+    id uuid primary key default gen_random_uuid(),
+    grade int not null default 1,
+    title varchar(2),
+    main_teacher_id uuid not null references users(id),
+    release_date timestamp,
+    created_at timestamp not null default now(),
+    updated_at timestamp not null default now(),
+    deleted_at timestamp default null
+);
+
+create table if not exists umetrika.discipline (
+    id uuid primary key default gen_random_uuid(),
+    name varchar(128) not null
+);
+
+create table if not exists umetrika.theme (
+    id uuid primary key default gen_random_uuid(),
+    name varchar(128) not null,
+    discipline_id uuid references discipline(id) not null
+);
+
+create table if not exists umetrika.study_group (
+    id uuid primary key default gen_random_uuid(),
+    teacher_id uuid references users(id) not null,
+    discipline_id uuid references discipline(id) not null,
+    class_id uuid references classes(id) not null
+);
+
+create table if not exists umetrika.lesson (
+    id uuid primary key default gen_random_uuid(),
+    theme_id uuid references theme(id) not null,
+    group_id uuid references classes(id) not null,
+    teacher_id uuid references users(id) not null
 );
