@@ -10,8 +10,9 @@ import (
 )
 
 type UMetrika struct {
-	log *slog.Logger
-	tp  testProvider
+	log                *slog.Logger
+	tp                 testProvider
+	schoolInfoProvider schoolInfoProvider
 }
 
 type testProvider interface {
@@ -23,13 +24,19 @@ type testProvider interface {
 	GetFullTestsByOwnerID(ctx context.Context, ownerID uuid.UUID) ([]models.EducationTestFull, error)
 }
 
+type schoolInfoProvider interface {
+	GetTeacherDisciplinesAndClasses(ctx context.Context, teacherID uuid.UUID) ([]models.TeacherDiscipline, error)
+}
+
 func New(
 	log *slog.Logger,
 	provider testProvider,
+	schoolInfoProvider schoolInfoProvider,
 ) *UMetrika {
 	return &UMetrika{
-		log: log,
-		tp:  provider,
+		log:                log,
+		tp:                 provider,
+		schoolInfoProvider: schoolInfoProvider,
 	}
 }
 
@@ -79,4 +86,8 @@ func (t *UMetrika) GetFullTestsByOwnerId(ctx context.Context, ownerId uuid.UUID)
 		return nil, fmt.Errorf("error while getting full tests by owner id: %w", err)
 	}
 	return tests, nil
+}
+
+func (t *UMetrika) GetTeacherDisciplinesAndClasses(ctx context.Context, teacherID uuid.UUID) ([]models.TeacherDiscipline, error) {
+	return t.schoolInfoProvider.GetTeacherDisciplinesAndClasses(ctx, teacherID)
 }
