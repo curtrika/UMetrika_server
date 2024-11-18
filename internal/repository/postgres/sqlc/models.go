@@ -101,6 +101,28 @@ func (ns NullTestType) Value() (driver.Value, error) {
 	return string(ns.TestType), nil
 }
 
+type Cause struct {
+	ID        pgtype.UUID
+	Title     string
+	ProblemID pgtype.UUID
+}
+
+type Class struct {
+	ID            pgtype.UUID
+	Grade         int32
+	Title         pgtype.Text
+	MainTeacherID pgtype.UUID
+	ReleaseDate   pgtype.Timestamp
+	CreatedAt     pgtype.Timestamp
+	UpdatedAt     pgtype.Timestamp
+	DeletedAt     pgtype.Timestamp
+}
+
+type Discipline struct {
+	ID   pgtype.UUID
+	Name string
+}
+
 type EducationAnswer struct {
 	AnswerID    pgtype.UUID
 	QuestionID  pgtype.UUID
@@ -163,4 +185,64 @@ type EducationTestResult struct {
 	Interpretation pgtype.Text
 	TakenAt        pgtype.Timestamp
 	UpdatedAt      pgtype.Timestamp
+}
+
+type Lesson struct {
+	ID        pgtype.UUID
+	ThemeID   pgtype.UUID
+	GroupID   pgtype.UUID
+	TeacherID pgtype.UUID
+}
+
+type Problem struct {
+	ID    pgtype.UUID
+	Title string
+}
+
+type Role struct {
+	ID    int32
+	Title string
+}
+
+type School struct {
+	ID        pgtype.UUID
+	LargeName string
+	CreatedAt pgtype.Timestamp
+	UpdatedAt pgtype.Timestamp
+	DeletedAt pgtype.Timestamp
+}
+
+type Solution struct {
+	ID        pgtype.UUID
+	Title     string
+	ProblemID pgtype.UUID
+}
+
+type StudyGroup struct {
+	ID           pgtype.UUID
+	TeacherID    pgtype.UUID
+	DisciplineID pgtype.UUID
+	ClassID      pgtype.UUID
+}
+
+type Theme struct {
+	ID           pgtype.UUID
+	Name         string
+	DisciplineID pgtype.UUID
+}
+
+type User struct {
+	ID         pgtype.UUID
+	FirstName  string
+	MiddleName string
+	LastName   string
+	Email      string
+	PassHash   []byte
+	Gender     pgtype.Bool
+	RoleID     pgtype.Int4
+	SchoolID   pgtype.UUID
+	ClassesID  pgtype.UUID
+	CreatedAt  pgtype.Timestamp
+	UpdatedAt  pgtype.Timestamp
+	DeletedAt  pgtype.Timestamp
 }

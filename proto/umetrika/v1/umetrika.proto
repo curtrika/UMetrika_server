@@ -37,6 +37,17 @@ service UMetrika {
     };
   }
 
+  rpc GetTeacherDisciplinesAndClasses(GetTeacherDisciplinesAndClassesRequest) returns (GetTeacherDisciplinesAndClassesResponse) {
+    option (google.api.http) = {
+      get: "/umetrika/v1/umetrika/teacher-disciplines/{teacher_id}"
+    };
+  }
+}
+
+message Error {
+  enum Code {
+    UNDEFINED_ERROR = 0;
+  }
 }
 
 // Common Messages
@@ -116,3 +127,39 @@ message AnswerGetDTO {
 		string answer_text = 2;
 		int32 answer_order = 3;
 }
+
+message GetTeacherDisciplinesAndClassesRequest {
+  string teacher_id = 1;
+}
+
+message GetTeacherDisciplinesAndClassesResponse {
+  repeated Error errors = 1;
+  repeated TeacherDiscipline teacher_discipline = 10;
+}
+
+message User {
+  string id = 1;
+  string first_name = 2;
+  string middle_name = 3;
+  string last_name = 4;
+  string email = 5;
+  bool gender = 6;
+  string role = 7;
+  string school_id = 8;
+  string classes_id = 9;
+}
+
+message Classes {
+  string ID = 1;
+  string Title = 2;
+  string MainTeacherID = 3;
+  repeated User students = 4;
+}
+
+message TeacherDiscipline {
+  string ID = 1;
+  string Title = 2;
+  repeated Classes classes = 3;
+}
+
+

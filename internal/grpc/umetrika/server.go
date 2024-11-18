@@ -30,8 +30,13 @@ type testsBackend interface {
 	GetFullTestsByOwnerId(ctx context.Context, ownerId uuid.UUID) ([]models.EducationTestFull, error)
 }
 
+type umetrikaProvider interface {
+	GetTeacherDisciplinesAndClasses(ctx context.Context, teacherID uuid.UUID) ([]models.TeacherDiscipline, error)
+}
+
 type UMetrika interface {
 	testsBackend
+	umetrikaProvider
 }
 
 func Register(gRPCServer *grpc.Server, umetrika UMetrika, converter Converter) {
@@ -142,6 +147,30 @@ func (s *serverAPI) GetFullTestByOwnerId(ctx context.Context, req *umetrikav1.Te
 		return nil, err
 	}
 	return ConvertFullTestToProto(test), nil
+}
+
+func (s *serverAPI) GetTeacherDisciplinesAndClasses(ctx context.Context, req *umetrikav1.GetTeacherDisciplinesAndClassesRequest) (*umetrikav1.GetTeacherDisciplinesAndClassesResponse, error) {
+	uid, err := uuid.Parse(req.TeacherId)
+	if err != nil {
+		return nil, fmt.Errorf("wrong id format")
+	}
+
+	teacherDisciplines, err := s.umetrika.GetTeacherDisciplinesAndClasses(ctx, uid)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: подумать как получше сделать
+	res := umetrikav1.GetTeacherDisciplinesAndClassesResponse{}
+	for _, elem := range teacherDisciplines {
+		pbElem, err := s.converter.TeacherDisciplineToProto(elem)
+		if err != nil {
+			return nil, err
+		}
+		res.TeacherDiscipline = append(res.TeacherDiscipline, pbElem)
+	}
+
+	return &res, nil
 }
 
 func ConvertFullTestToProto(tests []models.EducationTestFull) *umetrikav1.TestsGet {
