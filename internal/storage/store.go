@@ -5,8 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	storage "github.com/curtrika/UMetrika_server/internal/storage/sqlc_gen"
-	"github.com/jackc/pgx/v5"
 	"os"
 
 	"github.com/curtrika/UMetrika_server/internal/domain/models"
@@ -19,7 +17,6 @@ import (
 type Storage struct {
 	cvt Converter
 	db  *sql.DB
-	*storage.Queries
 }
 
 func DatabaseInit(databaseURL string) (*Storage, error) {
@@ -27,19 +24,13 @@ func DatabaseInit(databaseURL string) (*Storage, error) {
 	if err != nil {
 		return nil, err
 	}
-	conn, err := pgx.Connect(context.Background(), databaseURL)
-	if err != nil {
-		return nil, err
-	}
 
 	//if err := db.Ping(); err != nil {
 	//	return nil, err
 	//}
-	queries := storage.New(conn)
 
 	return &Storage{
-		db:      db,
-		Queries: queries,
+		db: db,
 	}, nil
 }
 
@@ -96,7 +87,7 @@ func (s *Storage) GetAppById(ctx context.Context, appID int32) (*models.App, err
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	//appModel := s.cvt.AppToModel(schema)
+	// appModel := s.cvt.AppToModel(schema)
 
 	return nil, nil
 }

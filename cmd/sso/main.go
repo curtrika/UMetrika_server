@@ -35,7 +35,7 @@ func main() {
 
 	testsRepo, err := postgres.New(ctx, cfg.DatabaseURL, &dbGenerated.ConverterImpl{})
 
-	application := app.Init(ctx, log, cfg.GRPC.Port, cfg.TokenTTL, database, testsRepo)
+	application := app.Init(ctx, log, cfg.GRPC.Port, cfg.TokenTTL, database, testsRepo, database)
 
 	go func() {
 		application.GRPCServer.MustRun()
